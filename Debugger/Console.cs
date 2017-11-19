@@ -387,7 +387,7 @@ namespace ModTools
             {
                 GUILayout.BeginHorizontal(skin.box);
 
-                GUI.contentColor = Color.blue;
+                GUI.contentColor = Color.cyan;
                 GUILayout.Label(item.Value);
                 GUI.contentColor = Color.white;
 
