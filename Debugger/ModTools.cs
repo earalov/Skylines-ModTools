@@ -219,7 +219,7 @@ namespace ModTools
                 console.visible = !console.visible;
             }
 
-            if (Input.GetKeyDown(KeyCode.BackQuote))
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.BackQuote))
             {
                 scriptEditor.visible = !scriptEditor.visible;
             }
