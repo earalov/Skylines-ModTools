@@ -44,6 +44,7 @@ namespace ModTools.Utils
             DumpACI(assetName, (Texture2D) material.GetTexture("_ACIMap"));
             DumpXYS(assetName, (Texture2D) material.GetTexture("_XYSMap"));
             DumpXYCA(assetName, (Texture2D) material.GetTexture("_XYCAMap"));
+            DumpAPR(assetName, (Texture2D)material.GetTexture("_APRMap"));
         }
 
         private static void DumpMainTex(string assetName, Texture2D mainTex, bool extract = true)
@@ -122,7 +123,7 @@ namespace ModTools.Utils
                 var r1 = new Color32[length].Invert();
                 var b1 = new Color32[length].Invert();
                 var a1 = new Color32[length].Invert();
-                xycaMap.ExtractChannels(r1, r1, b1, a1, false, false, true, false, false, true, true);
+                xycaMap.ExtractChannels(r1, r1, b1, a1, false, false, true, false, true, true, true);
                 TextureUtil.DumpTextureToPNG(r1.ColorsToTexture(xycaMap.width, xycaMap.height), $"{assetName}_n");
                 TextureUtil.DumpTextureToPNG(b1.ColorsToTexture(xycaMap.width, xycaMap.height), $"{assetName}_c");
                 TextureUtil.DumpTextureToPNG(a1.ColorsToTexture(xycaMap.width, xycaMap.height), $"{assetName}_a");
@@ -132,5 +133,29 @@ namespace ModTools.Utils
                 TextureUtil.DumpTextureToPNG(xycaMap, $"{assetName}_XYCA");
             }
         }
+
+        private static void DumpAPR(string assetName, Texture2D aprMap, bool extract = true)
+        {
+            if (aprMap == null)
+            {
+                return;
+            }
+            if (extract)
+            {
+                var length = aprMap.width * aprMap.height;
+                var a1 = new Color32[length].Invert();
+                var p1 = new Color32[length].Invert();
+                var r1 = new Color32[length].Invert();
+                aprMap.ExtractChannels(a1, p1, r1, null, true, true, true, true, true, false, false);
+                TextureUtil.DumpTextureToPNG(a1.ColorsToTexture(aprMap.width, aprMap.height), $"{assetName}_a");
+                TextureUtil.DumpTextureToPNG(p1.ColorsToTexture(aprMap.width, aprMap.height), $"{assetName}_p");
+                TextureUtil.DumpTextureToPNG(r1.ColorsToTexture(aprMap.width, aprMap.height), $"{assetName}_r");
+            }
+            else
+            {
+                TextureUtil.DumpTextureToPNG(aprMap, $"{assetName}_APR");
+            }
+        }
+
     }
 }
