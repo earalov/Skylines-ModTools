@@ -15,7 +15,7 @@ namespace ModTools
 
         private GameObject mainObject;
 
-        public static string Version { get; } = GitVersion.GetAssemblyVersion(typeof(ModToolsMod).Assembly);
+        public static string Version { get; } = typeof(ModToolsMod).Assembly.GetName().Version.ToString();
 
         public string Name => ModToolsName;
 
