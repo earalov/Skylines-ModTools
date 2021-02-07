@@ -1,173 +1,83 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F7D642E3-3546-47A8-AC52-4BA14E635FA9}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ModTools</RootNamespace>
+    <TargetFramework>net35</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>ModTools.ruleset</CodeAnalysisRuleSet>
     <AssemblyName>ModTools</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>ModTools</RootNamespace>   
+    
+    <Deterministic>false</Deterministic>
+    <AssemblyVersion>3.3.0.0</AssemblyVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <LangVersion>8</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
+    <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>ModTools.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>ModTools.ruleset</CodeAnalysisRuleSet>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <ManagedDLLPath>..\dependencies</ManagedDLLPath>
+    <SteamPath>~/Library/Application Support/Steam/</SteamPath>
+    <SteamPath Condition="! Exists ('$(SteamPath)')">$(ProgramFiles)\Steam</SteamPath>
+    <SteamPath Condition="! Exists ('$(SteamPath)')">$(Registry:HKEY_CURRENT_USER\Software\Valve\Steam@SteamPath)</SteamPath>
+    <CSPath>$(SteamPath)\steamapps\common\Cities_Skylines</CSPath>
+    <ManagedDLLPath Condition="!  Exists ('$(ManagedDLLPath)')">$(CSPath)\Cities_Data\Managed</ManagedDLLPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants></DefineConstants>
+  </PropertyGroup>  
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(ManagedDLLPath)\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="ColossalManaged">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
+      <HintPath>$(ManagedDLLPath)\ColossalManaged.dll</HintPath>
     </Reference>
     <Reference Include="ICities">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
+      <HintPath>$(ManagedDLLPath)\ICities.dll</HintPath>
     </Reference>
     <Reference Include="ObjUnity3D, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\ObjUnity3D.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>$(ManagedDLLPath)\UnityEngine.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Console\ConsoleMessage.cs" />
-    <Compile Include="Explorer\GUIMemberName.cs" />
-    <Compile Include="GamePanels\ButtonsInfoPanelExtension.cs" />
-    <Compile Include="GamePanels\GamePanelExtension.cs" />
-    <Compile Include="GamePanels\InfoPanelExtensionBase.cs" />
-    <Compile Include="GamePanels\IInfoPanelExtension.cs" />
-    <Compile Include="IGameObject.cs" />
-    <Compile Include="ModalUI.cs" />
-    <Compile Include="SelectionToolControl.cs" />
-    <Compile Include="SelectionTool.cs" />
-    <Compile Include="UI\ColorPicker.cs" />
-    <Compile Include="UI\GUIStackTrace.cs" />
-    <Compile Include="ILogger.cs" />
-    <Compile Include="Scripting\ScriptEditorFile.cs" />
-    <Compile Include="Utils\AssetDumpUtil.cs" />
-    <Compile Include="Utils\AtlasUtil.cs" />
-    <Compile Include="Utils\InstanceUtil.cs" />
-    <Compile Include="Utils\ColorUtil.cs" />
-    <Compile Include="ModConfiguration.cs" />
-    <Compile Include="Console\CustomConsole.cs" />
-    <Compile Include="CustomPrefabs.cs" />
-    <Compile Include="DebugRenderer.cs" />
-    <Compile Include="Explorer\GUIButtons.cs" />
-    <Compile Include="Explorer\GUICollection.cs" />
-    <Compile Include="Explorer\GUICollectionNavigation.cs" />
-    <Compile Include="Explorer\GUIComponent.cs" />
-    <Compile Include="Explorer\GUIEnumerable.cs" />
-    <Compile Include="Explorer\GUIExpander.cs" />
-    <Compile Include="Explorer\GUIField.cs" />
-    <Compile Include="Explorer\GUIList.cs" />
-    <Compile Include="Explorer\GUIMaterial.cs" />
-    <Compile Include="Explorer\GUIProperty.cs" />
-    <Compile Include="Explorer\GUIRecursiveTree.cs" />
-    <Compile Include="Explorer\GUIReflect.cs" />
-    <Compile Include="Explorer\GUITransform.cs" />
-    <Compile Include="Explorer\SceneExplorerCommon.cs" />
-    <Compile Include="Explorer\Plopper.cs" />
-    <Compile Include="LoadingExtension.cs" />
-    <Compile Include="Utils\FileUtil.cs" />
-    <Compile Include="Explorer\GameObjectUtil.cs" />
-    <Compile Include="UI\GUIArea.cs" />
-    <Compile Include="UI\GUIComboBox.cs" />
-    <Compile Include="UI\GUIWindow.cs" />
-    <Compile Include="Utils\GitVersion.cs" />
-    <Compile Include="Utils\HashUtil.cs" />
-    <Compile Include="Scripting\IModEntryPoint.cs" />
-    <Compile Include="Explorer\MeshViewer.cs" />
-    <Compile Include="MainWindow.cs" />
-    <Compile Include="UI\GUIControls.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="ModToolsMod.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Explorer\ReferenceChain.cs" />
-    <Compile Include="AppearanceConfig.cs" />
-    <Compile Include="Explorer\GUIMethod.cs" />
-    <Compile Include="Explorer\SceneExplorerState.cs" />
-    <Compile Include="Scripting\ScriptCompiler.cs" />
-    <Compile Include="Scripting\ScriptEditor.cs" />
-    <Compile Include="Console\StackTraceViewer.cs" />
-    <Compile Include="Explorer\TextureViewer.cs" />
-    <Compile Include="Explorer\SceneExplorer.cs" />
-    <Compile Include="Utils\ParseHelper.cs" />
-    <Compile Include="Utils\ReferenceChainBuilder.cs" />
-    <Compile Include="Utils\ShaderUtil.cs" />
-    <Compile Include="Utils\ToolControllerUtil.cs" />
-    <Compile Include="Utils\ToolUtil.cs" />
-    <Compile Include="Utils\TypeUtil.cs" />
-    <Compile Include="UserNotifications.cs" />
-    <Compile Include="Utils\DumpUtil.cs" />
-    <Compile Include="Utils\TextureUtil.cs" />
-    <Compile Include="Explorer\Watches.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SelectionToolButton.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="SelectionToolBar.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
     <None Include="ModTools.ruleset" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="lib\ObjUnity3D.dll" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
-      <Version>2.9.3</Version>
-    </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers">
-      <Version>1.1.118</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.3" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>if not exist "$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)" mkdir "$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)"
-xcopy /y "$(TargetPath)" "$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)"
-xcopy /y "$(ProjectDir)\lib" "$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)" /s /e</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  
+  <Target Name="DeployToModDirectory" AfterTargets="Build">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="Targets" />
+    </GetAssemblyIdentity>
+    <PropertyGroup>
+      <DeployDir>$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)\</DeployDir>
+      <UnityPath>$(MSBuildExtensionsPath64)\..\Unity\</UnityPath>
+      <UnityPath Condition="! Exists ('$(UnityPath)')">..\Unity\</UnityPath>
+      <MonoDir>$(UnityPath)Editor\Data\MonoBleedingEdge\</MonoDir>
+      <Now>$([System.DateTime]::Now.ToString("h:mmtt"))</Now>
+    </PropertyGroup>
+    <ItemGroup>
+      <Files Include="$(TargetDir)*.*" />
+      <VersionNumber Include="@(Targets->'%(Version)')" />
+    </ItemGroup>
+    <Delete Files="$(TargetDir)*.mdb" />
+    <Exec Command="&quot;$(MonoDir)bin\mono.exe&quot; &quot;$(MonoDir)lib\mono\4.5\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" />
+    <Delete Files="$(DeployDir)*" />
+    <Copy SourceFiles="@(Files)" DestinationFolder="$(DeployDir)" />
+    <Message Importance="high" Text="AssemblyVersion= @(VersionNumber) time=$(Now)" />
+  </Target>  
 </Project>
