@@ -263,8 +263,17 @@ namespace ModTools.UI
             GUI.DrawTexture(bottomRect, MoveNormalTexture);
         }
 
+
+        void FitScreen() {
+            windowRect.width = Mathf.Clamp(windowRect.width, minSize.x, Screen.width);
+            windowRect.height = Mathf.Clamp(windowRect.height, minSize.y, Screen.height);
+            windowRect.x = Mathf.Clamp(windowRect.x, 0, Screen.width);
+            windowRect.y = Mathf.Clamp(windowRect.y, 0, Screen.height);
+        }
+
         private void DrawTitlebar(Vector3 mouse)
         {
+            FitScreen();
             var moveRect = new Rect(windowRect.x * UIScale, windowRect.y * UIScale, windowRect.width * UIScale, 20.0f);
             var moveTex = MoveNormalTexture;
 
@@ -351,6 +360,7 @@ namespace ModTools.UI
 
         private void DrawResizeHandle(Vector3 mouse)
         {
+            FitScreen();
             var resizeRect = new Rect(windowRect.x * UIScale + windowRect.width * UIScale - 16.0f, windowRect.y * UIScale + windowRect.height * UIScale - 8.0f, 16.0f, 8.0f);
             var resizeTex = ResizeNormalTexture;
 
