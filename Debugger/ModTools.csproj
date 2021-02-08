@@ -79,13 +79,14 @@
       <Now>$([System.DateTime]::Now.ToString("h:mmtt"))</Now>
     </PropertyGroup>
     <ItemGroup>
-      <Files Include="$(TargetPath);$(TargetPath).mdb;$(TargetDir)ObjUnity3D.dll" />
+	<AuxiliaryFiles Include="$(TargetPath).mdb;$(TargetDir)ObjUnity3D.dll" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
     <Delete Files="$(TargetDir)*.mdb" />
     <Exec Command="&quot;$(MonoDir)bin\mono.exe&quot; &quot;$(MonoDir)lib\mono\4.5\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" ContinueOnError="true" />
-	<RemoveDir Directories="$(DeployDir)" />
-    <Copy SourceFiles="@(Files)" DestinationFolder="$(DeployDir)" />
-    <Message Importance="high" Text="AssemblyVersion= @(VersionNumber) time=$(Now)" />
+	  <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" />
+	  <Delete Files="$(DeployDir)$(TargetFileName)" />
+	  <Copy SourceFiles="$(Targetpath)" DestinationFolder="$(DeployDir)" />
+	  <Message Importance="high" Text="AssemblyVersion= @(VersionNumber) time=$(Now)" />
   </Target>  
 </Project>
