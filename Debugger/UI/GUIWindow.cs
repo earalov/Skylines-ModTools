@@ -264,7 +264,7 @@ namespace ModTools.UI
         }
 
 
-        void FitScreen() {
+        private void FitScreen() {
             windowRect.width = Mathf.Clamp(windowRect.width, minSize.x, Screen.width);
             windowRect.height = Mathf.Clamp(windowRect.height, minSize.y, Screen.height);
             windowRect.x = Mathf.Clamp(windowRect.x, 0, Screen.width);
