@@ -36,11 +36,10 @@ namespace ModTools
                 var sceneExplorer = FindObjectOfType<SceneExplorer>();
                 sceneExplorer.Show(refChain);
 
-                if (sceneExplorer.Visible) {
-                    var debugRenderer = FindObjectOfType<UIView>().gameObject.AddComponent<DebugRenderer>();
-                    debugRenderer.DrawDebugInfo = false;
+                if (sceneExplorer.Visible)
+                {
+                    DrawDebugInfo = false;
                 }
-
             }
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.G) && hoveredComponents.Count > 1 && hoveredComponent != null)
