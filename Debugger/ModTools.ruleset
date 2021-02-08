@@ -230,7 +230,7 @@
     <Rule Id="IDE0010WithoutSuggestion" Action="None" />
     <Rule Id="IDE0033" Action="Info" />
     <Rule Id="IDE0044" Action="Info" />
-    <Rule Id="IDE0055" Action="Info" />
+    <Rule Id="IDE0055" Action="None" />
   </Rules>
   <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers">
     <Rule Id="CA1031" Action="None" />
