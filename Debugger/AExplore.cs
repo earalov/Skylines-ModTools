@@ -24,7 +24,7 @@ namespace ModTools {
         }
 
         public static void Release() {
-            Destroy(Instance);
+            Destroy(Instance.gameObject);
             Instance = null;
         }
     }
