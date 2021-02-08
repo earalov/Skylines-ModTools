@@ -578,8 +578,24 @@ namespace ModTools.Explorer
 
                         case ReferenceChain.ReferenceType.EnumerableItem:
                             var index = (uint)refChain.GetChainItem(i);
-                            state.SelectedArrayStartIndices[expandedRefChain.UniqueId] = index;
-                            state.SelectedArrayEndIndices[expandedRefChain.UniqueId] = index;
+                            uint startIndex;
+                            if (state.SelectedArrayStartIndices.TryGetValue(expandedRefChain.UniqueId,out startIndex)) {
+                                startIndex = Math.Min(index, startIndex);
+                            } else if (index > 16) {
+                                    startIndex = index - 16;
+                            } else {
+                                startIndex = 0;
+                            }
+
+                            uint endIndex;
+                            if (state.SelectedArrayEndIndices.TryGetValue(expandedRefChain.UniqueId, out endIndex)) {
+                                endIndex = Math.Max(index, endIndex);
+                            } else {
+                                endIndex = startIndex + 31;
+                            }
+
+                            state.SelectedArrayStartIndices[expandedRefChain.UniqueId] = startIndex;
+                            state.SelectedArrayEndIndices[expandedRefChain.UniqueId] = endIndex;
                             expandedRefChain = expandedRefChain.Add(index);
                             if (!state.ExpandedObjects.Contains(expandedRefChain.UniqueId))
                             {

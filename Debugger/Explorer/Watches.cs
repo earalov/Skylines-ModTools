@@ -90,10 +90,14 @@ namespace ModTools.Explorer
                         GUIButtons.SetupSmartShowButtons(value, smartType); // TODO: get from cache
                     }
 
-                    if (GUILayout.Button("Show watched field"))
+                    if (GUILayout.Button("^"))
                     {
                         var sceneExplorer = FindObjectOfType<SceneExplorer>();
                         sceneExplorer.Show(watch.SubChain(watch.Length - 1));
+                    }
+
+                    if (value != null) {
+                        GUIButtons.SetupJumpButton(value, watch);
                     }
 
                     if (GUILayout.Button("x", GUILayout.Width(24)))

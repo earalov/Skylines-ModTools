@@ -16,6 +16,9 @@ namespace ModTools.Explorer
             switch (value)
             {
                 case null:
+                    if (GUILayout.Button("Watch")) {
+                        MainWindow.Instance.Watches.AddWatch(refChain);
+                    }
                     return;
 
                 case PrefabInfo prefabInfo:
