@@ -31,19 +31,24 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(ManagedDLLPath)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="ColossalManaged">
       <HintPath>$(ManagedDLLPath)\ColossalManaged.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="ICities">
       <HintPath>$(ManagedDLLPath)\ICities.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="ObjUnity3D, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>lib\ObjUnity3D.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
+      <Private>true</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(ManagedDLLPath)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -71,11 +76,11 @@
       <Now>$([System.DateTime]::Now.ToString("h:mmtt"))</Now>
     </PropertyGroup>
     <ItemGroup>
-      <Files Include="$(TargetDir)*.*" />
+      <Files Include="$(TargetPath);$(TargetPath).mdb;$(TargetDir)ObjUnity3D.dll" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
     <Delete Files="$(TargetDir)*.mdb" />
-    <Exec Command="&quot;$(MonoDir)bin\mono.exe&quot; &quot;$(MonoDir)lib\mono\4.5\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" />
+    <Exec Command="&quot;$(MonoDir)bin\mono.exe&quot; &quot;$(MonoDir)lib\mono\4.5\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" ContinueOnError="true" />
     <Delete Files="$(DeployDir)*" />
     <Copy SourceFiles="@(Files)" DestinationFolder="$(DeployDir)" />
     <Message Importance="high" Text="AssemblyVersion= @(VersionNumber) time=$(Now)" />
