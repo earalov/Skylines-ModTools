@@ -114,6 +114,16 @@ namespace ModTools
 
             modalUI.Update(IsMouseOverWindow(), middleButtonState);
 
+            // Unhandled modifiers
+            if( Input.GetKey(KeyCode.RightControl) ||
+                Input.GetKey(KeyCode.LeftAlt) ||
+                Input.GetKey(KeyCode.RightAlt) ||
+                Input.GetKey(KeyCode.LeftShift) ||
+                Input.GetKey(KeyCode.RightShift))
+            {
+                return;
+            }
+
             if (!Input.GetKey(KeyCode.LeftControl))
             {
                 if (Config.UseModToolsConsole && Input.GetKeyDown(KeyCode.F7))
