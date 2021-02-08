@@ -271,6 +271,13 @@ namespace ModTools.Explorer
                 configChanged = true;
             }
 
+            var highlightHoveredMember = GUILayout.Toggle(MainWindow.Instance.Config.HighlightHoveredMember, " Highligh hovered member");
+            if (highlightHoveredMember != MainWindow.Instance.Config.HighlightHoveredMember)
+            {
+                MainWindow.Instance.Config.HighlightHoveredMember = highlightHoveredMember;
+                configChanged = true;
+            }
+
             if (configChanged)
             {
                 MainWindow.Instance.SaveConfig();

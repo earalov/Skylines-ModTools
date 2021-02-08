@@ -16,6 +16,10 @@ namespace ModTools.UI
         private static GUIWindow movingWindow;
         private static Vector2 moveDragHandle = Vector2.zero;
 
+        private static Texture2D highlightTexture;
+
+        private static GUIStyle highlightstyle;
+
         private readonly int id;
         private readonly bool resizable;
         private readonly bool hasTitlebar;
@@ -29,7 +33,7 @@ namespace ModTools.UI
 
         private bool visible;
 
-        public static GUIStyle HoveredItemStyle { get; private set; }
+        public static GUIStyle HighlightStyle => Config.HighlightHoveredMember ? highlightstyle : GUIStyle.none;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811", Justification = ".ctor of a Unity component")]
         protected GUIWindow(string title, Rect rect, bool resizable = true, bool hasTitlebar = true)
@@ -97,10 +101,8 @@ namespace ModTools.UI
             Windows.Remove(this);
         }
 
-        public void OnGUI()
-        {
-            if (skin == null)
-            {
+        public void OnGUI() {
+            if (skin == null) {
                 BgTexture = new Texture2D(1, 1);
                 BgTexture.SetPixel(0, 0, Config.BackgroundColor);
                 BgTexture.Apply();
@@ -159,11 +161,14 @@ namespace ModTools.UI
                 skin.settings.selectionColor = GUI.skin.settings.selectionColor;
                 skin.settings.tripleClickSelectsLine = GUI.skin.settings.tripleClickSelectsLine;
 
-                HoveredItemStyle = new GUIStyle(skin.button);
-                HoveredItemStyle.normal = HoveredItemStyle.onNormal = new GUIStyleState();
-                HoveredItemStyle.margin = default;
-                HoveredItemStyle.padding = default;
-                HoveredItemStyle.border = default;
+                highlightstyle = new GUIStyle(GUI.skin.button);
+                highlightstyle.margin = new RectOffset(0, 0, 0, 0);
+                highlightstyle.padding = new RectOffset(0, 0, 0, 0);
+                highlightstyle.normal = highlightstyle.onNormal = new GUIStyleState();
+                LoadHighlightTexture();
+                highlightstyle.onHover = highlightstyle.hover = new GUIStyleState {
+                    background = highlightTexture,
+                };
             }
 
             if (!Visible)
@@ -188,6 +193,23 @@ namespace ModTools.UI
             GUI.matrix = matrix;
 
             GUI.skin = oldSkin;
+        }
+
+        internal static Texture2D LoadHighlightTexture()
+        {
+            using var textureStream = System.Reflection.Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream("ModTools.highlight.png");
+            var buf = new byte[textureStream.Length];
+            textureStream.Read(buf, 0, buf.Length);
+            textureStream.Close();
+            highlightTexture = new Texture2D(12, 12) {
+                filterMode = FilterMode.Bilinear,
+                name = "modtools highlight",
+                wrapMode = TextureWrapMode.Clamp,
+            };
+            highlightTexture.LoadImage(buf);
+            highlightTexture.Apply(false, true);
+            return highlightTexture;
         }
 
         public void MoveResize(Rect newWindowRect) => windowRect = newWindowRect;

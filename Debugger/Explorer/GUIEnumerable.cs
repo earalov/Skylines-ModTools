@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using ModTools.UI;
 using ModTools.Utils;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ namespace ModTools.Explorer
             {
                 refChain = oldRefChain.Add(count);
 
-                GUILayout.BeginHorizontal();
+                GUILayout.BeginHorizontal(GUIWindow.HighlightStyle);
                 SceneExplorerCommon.InsertIndent(refChain.Indentation);
 
                 var type = value?.GetType();

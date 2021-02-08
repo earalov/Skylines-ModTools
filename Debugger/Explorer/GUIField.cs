@@ -21,7 +21,7 @@ namespace ModTools.Explorer
                 return;
             }
 
-            GUILayout.BeginHorizontal(GUIWindow.HoveredItemStyle);
+            GUILayout.BeginHorizontal(GUIWindow.HighlightStyle);
             SceneExplorerCommon.InsertIndent(refChain.Indentation);
 
             GUI.contentColor = Color.white;

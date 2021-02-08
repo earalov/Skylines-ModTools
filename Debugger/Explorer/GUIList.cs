@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using ModTools.UI;
 using ModTools.Utils;
 using UnityEngine;
 
@@ -41,7 +42,7 @@ namespace ModTools.Explorer
             {
                 refChain = oldRefChain.Add(i);
 
-                GUILayout.BeginHorizontal();
+                GUILayout.BeginHorizontal(GUIWindow.HighlightStyle);
                 SceneExplorerCommon.InsertIndent(refChain.Indentation);
 
                 GUI.contentColor = Color.white;

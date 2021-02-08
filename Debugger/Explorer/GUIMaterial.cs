@@ -38,7 +38,7 @@ namespace ModTools.Explorer
 
                 var type = value.GetType();
 
-                GUILayout.BeginHorizontal();
+                GUILayout.BeginHorizontal(GUIWindow.HighlightStyle);
                 SceneExplorerCommon.InsertIndent(refChain.Indentation + 1);
 
                 GUIExpander.ExpanderControls(state, refChain, type);

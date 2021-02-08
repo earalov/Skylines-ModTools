@@ -27,7 +27,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants></DefineConstants>
-  </PropertyGroup>  
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="highlight.png" />
+  </ItemGroup>  
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(ManagedDLLPath)\Assembly-CSharp.dll</HintPath>
@@ -52,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="highlight.png" />
     <EmbeddedResource Include="SelectionToolButton.png" />
     <EmbeddedResource Include="SelectionToolBar.png" />
     <None Include="ModTools.ruleset" />

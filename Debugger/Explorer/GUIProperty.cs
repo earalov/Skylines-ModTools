@@ -22,7 +22,7 @@ namespace ModTools.Explorer
                 return;
             }
 
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal(GUIWindow.HighlightStyle);
             SceneExplorerCommon.InsertIndent(refChain.Indentation);
 
             object value = null;

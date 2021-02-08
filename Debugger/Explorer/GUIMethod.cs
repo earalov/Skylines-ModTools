@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using ModTools.UI;
+using System.Reflection;
 using UnityEngine;
 
 namespace ModTools.Explorer
@@ -18,7 +19,7 @@ namespace ModTools.Explorer
                 return;
             }
 
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal(GUIWindow.HighlightStyle);
             SceneExplorerCommon.InsertIndent(refChain.Indentation);
 
             GUI.contentColor = MainWindow.Instance.Config.MemberTypeColor;

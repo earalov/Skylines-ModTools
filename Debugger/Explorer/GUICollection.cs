@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using ModTools.UI;
 using ModTools.Utils;
 using UnityEngine;
 
@@ -48,7 +49,7 @@ namespace ModTools.Explorer
 
                 refChain = oldRefChain.Add(count);
 
-                GUILayout.BeginHorizontal();
+                GUILayout.BeginHorizontal(GUIWindow.HighlightStyle);
                 SceneExplorerCommon.InsertIndent(refChain.Indentation);
 
                 var isNullOrEmpty = value == null || flagIsEnum && Convert.ToInt32(flagsField.GetValue(value)) == 0;

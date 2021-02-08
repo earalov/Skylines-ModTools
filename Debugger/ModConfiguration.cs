@@ -138,6 +138,9 @@ namespace ModTools
         [XmlElement("sceneExplorerShowInheritedMembers")]
         public bool ShowInheritedMembers { get; set; }
 
+        [XmlElement("sceneExplorerHighlightHoveredMember")]
+        public bool HighlightHoveredMember { get; set; }
+
         #region Appearance
 
         [XmlElement("sceneExplorerTreeIdentSpacing")]

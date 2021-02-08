@@ -41,6 +41,9 @@ namespace ModTools
 
                 var modTools = mainWindowObject.AddComponent<MainWindow>();
                 modTools.Initialize();
+#if DEBUG
+                AExplore.Create();
+#endif
             }
             catch (Exception e)
             {
@@ -63,6 +66,9 @@ namespace ModTools
                 UnityEngine.Object.Destroy(mainObject);
                 mainObject = null;
             }
+#if DEBUG
+            AExplore.Release();
+#endif
         }
     }
 }
