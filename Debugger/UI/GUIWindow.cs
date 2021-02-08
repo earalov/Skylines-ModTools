@@ -29,6 +29,8 @@ namespace ModTools.UI
 
         private bool visible;
 
+        public static GUIStyle HoveredItemStyle { get; private set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811", Justification = ".ctor of a Unity component")]
         protected GUIWindow(string title, Rect rect, bool resizable = true, bool hasTitlebar = true)
         {
@@ -156,6 +158,12 @@ namespace ModTools.UI
                 skin.settings.doubleClickSelectsWord = GUI.skin.settings.doubleClickSelectsWord;
                 skin.settings.selectionColor = GUI.skin.settings.selectionColor;
                 skin.settings.tripleClickSelectsLine = GUI.skin.settings.tripleClickSelectsLine;
+
+                HoveredItemStyle = new GUIStyle(skin.button);
+                HoveredItemStyle.normal = HoveredItemStyle.onNormal = new GUIStyleState();
+                HoveredItemStyle.margin = default;
+                HoveredItemStyle.padding = default;
+                HoveredItemStyle.border = default;
             }
 
             if (!Visible)
