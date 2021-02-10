@@ -168,7 +168,7 @@ namespace ModTools.Explorer
 
                 GUI.contentColor = MainWindow.Instance.Config.ValueColor;
 
-                var newValue = GUIControls.PrimitiveValueField(refChain.UniqueId, string.Empty, value);
+                var newValue = GUIControls.NumericValueField(refChain.UniqueId, string.Empty, value);
                 if (newValue != value)
                 {
                     material.SetFloat(prop, newValue);

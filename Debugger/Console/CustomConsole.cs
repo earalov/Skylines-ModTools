@@ -314,7 +314,7 @@ namespace ModTools.Scripting
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Max items in history:", GUILayout.ExpandWidth(false));
-            Config.ConsoleMaxHistoryLength = GUIControls.PrimitiveValueField("ConsoleMaxItemsInHistory", string.Empty, Config.ConsoleMaxHistoryLength);
+            Config.ConsoleMaxHistoryLength = GUIControls.NumericValueField("ConsoleMaxItemsInHistory", string.Empty, Config.ConsoleMaxHistoryLength);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
