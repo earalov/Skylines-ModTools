@@ -14,7 +14,7 @@ namespace ModTools.Explorer
         private const float WindowBottomMargin = 8.0f;
 
         private const float HeaderHeightCompact = 1.65f;
-        private const float HeaderHeightExpanded = 19.8f; // 13.75
+        private const float HeaderHeightExpanded = 13.75f;
 
         private const float SceneTreeWidth = 320.0f;
 
@@ -241,6 +241,9 @@ namespace ModTools.Explorer
 
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
+            
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical();
 
             var showModifiers = GUILayout.Toggle(MainWindow.Instance.Config.ShowModifiers, " Show field / property modifiers");
             if (showModifiers != MainWindow.Instance.Config.ShowModifiers)
@@ -264,6 +267,9 @@ namespace ModTools.Explorer
                 configChanged = true;
             }
 
+            GUILayout.EndVertical();
+            GUILayout.BeginVertical();
+
             var sortAlphabetically = GUILayout.Toggle(MainWindow.Instance.Config.SortItemsAlphabetically, " Sort alphabetically");
             if (sortAlphabetically != MainWindow.Instance.Config.SortItemsAlphabetically)
             {
@@ -284,6 +290,10 @@ namespace ModTools.Explorer
                 MainWindow.Instance.Config.SubmitNumbersOnEnter = submitNumbersOnEnter;
                 configChanged = true;
             }
+
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+
 
             if (configChanged)
             {
