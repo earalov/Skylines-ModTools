@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ColossalFramework.UI;
 using ModTools.Explorer;
 using ModTools.Utils;
 using UnityEngine;
@@ -382,6 +383,21 @@ namespace ModTools
             GUI.color = Color.white;
             DeveloperUI.LabelOutline(new Rect(screenPoint.x, screenPoint.y, 500f, 500f), text, Color.black, Color.cyan, GUI.skin.label, 2f);
             GUI.color = color;
+        }
+
+        protected override void OnToolUpdate()
+        {
+            base.OnToolUpdate();
+            if (UIView.library.Get("PauseMenu")?.isVisible == true)
+            {
+                UIView.library.Hide("PauseMenu");
+                ToolsModifierControl.SetTool<DefaultTool>();
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                ToolsModifierControl.SetTool<DefaultTool>();
+            }
         }
 
         private struct SegmentAndNode
