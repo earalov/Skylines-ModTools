@@ -6,8 +6,6 @@ namespace ModTools.UI
 {
     internal abstract class GUIWindow : MonoBehaviour, IDestroyableObject, IUIObject
     {
-        private const float UIScale = 1.0f;
-
         private static readonly List<GUIWindow> Windows = new List<GUIWindow>();
 
         private static GUIWindow resizingWindow;
@@ -183,14 +181,14 @@ namespace ModTools.UI
                 GUI.skin = skin;
             }
 
-            var matrix = GUI.matrix;
-            GUI.matrix = Matrix4x4.Scale(new Vector3(UIScale, UIScale, UIScale));
+            var oldMatrix = GUI.matrix;
+            GUI.matrix = UIScaler.ScaleMatrix;
 
             windowRect = GUI.Window(id, windowRect, WindowFunction, string.Empty);
 
             OnWindowDrawn();
 
-            GUI.matrix = matrix;
+            GUI.matrix = oldMatrix;
 
             GUI.skin = oldSkin;
         }
@@ -216,8 +214,7 @@ namespace ModTools.UI
 
         protected static bool IsMouseOverWindow()
         {
-            var mouse = Input.mousePosition;
-            mouse.y = Screen.height - mouse.y;
+            var mouse = UIScaler.MousePosition;
             return Windows.FindIndex(window => window.Visible && window.windowRect.Contains(mouse)) >= 0;
         }
 
@@ -253,6 +250,7 @@ namespace ModTools.UI
 
         private void WindowFunction(int windowId)
         {
+            FitScreen();
             GUILayout.Space(8.0f);
 
             try
@@ -266,8 +264,7 @@ namespace ModTools.UI
 
             GUILayout.Space(16.0f);
 
-            var mouse = Input.mousePosition;
-            mouse.y = Screen.height - mouse.y;
+            var mouse = UIScaler.MousePosition;
 
             DrawBorder();
 
@@ -294,17 +291,18 @@ namespace ModTools.UI
         }
 
 
-        private void FitScreen() {
-            windowRect.width = Mathf.Clamp(windowRect.width, minSize.x, Screen.width);
-            windowRect.height = Mathf.Clamp(windowRect.height, minSize.y, Screen.height);
-            windowRect.x = Mathf.Clamp(windowRect.x, 0, Screen.width);
-            windowRect.y = Mathf.Clamp(windowRect.y, 0, Screen.height);
+        private void FitScreen()
+        {
+            windowRect.width = Mathf.Clamp(windowRect.width, minSize.x, UIScaler.GUI_WIDTH);
+            windowRect.height = Mathf.Clamp(windowRect.height, minSize.y, UIScaler.GUI_HEIGHT);
+            windowRect.x = Mathf.Clamp(windowRect.x, 0, UIScaler.GUI_WIDTH);
+            windowRect.y = Mathf.Clamp(windowRect.y, 0, UIScaler.GUI_HEIGHT);
         }
+
 
         private void DrawTitlebar(Vector3 mouse)
         {
-            FitScreen();
-            var moveRect = new Rect(windowRect.x * UIScale, windowRect.y * UIScale, windowRect.width * UIScale, 20.0f);
+            var moveRect = new Rect(windowRect.x, windowRect.y, windowRect.width, 20.0f);
             var moveTex = MoveNormalTexture;
 
             // TODO: reduce nesting
@@ -321,25 +319,7 @@ namespace ModTools.UI
                             var pos = new Vector2(mouse.x, mouse.y) + moveDragHandle;
                             windowRect.x = pos.x;
                             windowRect.y = pos.y;
-                            if (windowRect.x < 0.0f)
-                            {
-                                windowRect.x = 0.0f;
-                            }
-
-                            if (windowRect.x + windowRect.width > Screen.width)
-                            {
-                                windowRect.x = Screen.width - windowRect.width;
-                            }
-
-                            if (windowRect.y < 0.0f)
-                            {
-                                windowRect.y = 0.0f;
-                            }
-
-                            if (windowRect.y + windowRect.height > Screen.height)
-                            {
-                                windowRect.y = Screen.height - windowRect.height;
-                            }
+                            FitScreen();
                         }
                         else
                         {
@@ -361,15 +341,15 @@ namespace ModTools.UI
                 }
             }
 
-            GUI.DrawTexture(new Rect(0.0f, 0.0f, windowRect.width * UIScale, 20.0f), moveTex, ScaleMode.StretchToFill);
+            GUI.DrawTexture(new Rect(0.0f, 0.0f, windowRect.width, 20.0f), moveTex, ScaleMode.StretchToFill);
             GUI.contentColor = Config.TitleBarTextColor;
-            GUI.Label(new Rect(8.0f, 0.0f, windowRect.width * UIScale, 20.0f), Title);
+            GUI.Label(new Rect(8.0f, 0.0f, windowRect.width, 20.0f), Title);
             GUI.contentColor = Color.white;
         }
 
         private void DrawCloseButton(Vector3 mouse)
         {
-            var closeRect = new Rect(windowRect.x * UIScale + windowRect.width * UIScale - 20.0f, windowRect.y * UIScale, 16.0f, 8.0f);
+            var closeRect = new Rect(windowRect.x + windowRect.width - 20.0f, windowRect.y, 16.0f, 8.0f);
             var closeTex = CloseNormalTexture;
 
             if (!GUIUtility.hasModalWindow && closeRect.Contains(mouse))
@@ -390,8 +370,7 @@ namespace ModTools.UI
 
         private void DrawResizeHandle(Vector3 mouse)
         {
-            FitScreen();
-            var resizeRect = new Rect(windowRect.x * UIScale + windowRect.width * UIScale - 16.0f, windowRect.y * UIScale + windowRect.height * UIScale - 8.0f, 16.0f, 8.0f);
+            var resizeRect = new Rect(windowRect.x + windowRect.width - 16.0f, windowRect.y + windowRect.height - 8.0f, 16.0f, 8.0f);
             var resizeTex = ResizeNormalTexture;
 
             // TODO: reduce nesting
@@ -405,30 +384,12 @@ namespace ModTools.UI
 
                         if (Input.GetMouseButton(0))
                         {
-                            var size = new Vector2(mouse.x, mouse.y) + resizeDragHandle - new Vector2(windowRect.x, windowRect.y);
-
-                            if (size.x < minSize.x)
-                            {
-                                size.x = minSize.x;
-                            }
-
-                            if (size.y < minSize.y)
-                            {
-                                size.y = minSize.y;
-                            }
-
+                            var size = new Vector2(mouse.x, mouse.y) 
+                                + resizeDragHandle 
+                                - new Vector2(windowRect.x, windowRect.y);
                             windowRect.width = size.x;
                             windowRect.height = size.y;
-
-                            if (windowRect.x + windowRect.width >= Screen.width)
-                            {
-                                windowRect.width = Screen.width - windowRect.x;
-                            }
-
-                            if (windowRect.y + windowRect.height >= Screen.height)
-                            {
-                                windowRect.height = Screen.height - windowRect.y;
-                            }
+                            FitScreen();
                         }
                         else
                         {
@@ -444,7 +405,9 @@ namespace ModTools.UI
                     if (Input.GetMouseButton(0))
                     {
                         resizingWindow = this;
-                        resizeDragHandle = new Vector2(windowRect.x + windowRect.width, windowRect.y + windowRect.height) - new Vector2(mouse.x, mouse.y);
+                        resizeDragHandle = 
+                            new Vector2(windowRect.x + windowRect.width, windowRect.y + windowRect.height) - 
+                            new Vector2(mouse.x, mouse.y);
                     }
                 }
             }

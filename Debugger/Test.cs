@@ -38,6 +38,8 @@ namespace ModTools
         public TextAnchor Anchor;
         public TestFlags testFlags;
 
+        public float ScreenWidth => Screen.width;
+        public float ScreenHeight => Screen.height;
 
         public Test()
         {
