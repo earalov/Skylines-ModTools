@@ -2,8 +2,8 @@
 using ColossalFramework;
 using ColossalFramework.Plugins;
 using ICities;
-using ModTools.Utils;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ModTools
 {
@@ -41,9 +41,17 @@ namespace ModTools
 
                 var modTools = mainWindowObject.AddComponent<MainWindow>();
                 modTools.Initialize();
+
 #if DEBUG
                 Test.Create();
 #endif
+
+                string scene = SceneManager.GetActiveScene().name;
+                if(scene != "IntroScreen" && scene != "Startup")
+                {
+                    // hot reload:
+                    LoadingExtension.Load();
+                }
             }
             catch (Exception e)
             {
@@ -66,9 +74,13 @@ namespace ModTools
                 UnityEngine.Object.Destroy(mainObject);
                 mainObject = null;
             }
+
 #if DEBUG
             Test.Release();
 #endif
+
+            // hot unload
+            UnityEngine.Object.Destroy(UnityEngine.Object.FindObjectOfType<SelectionToolControl>());
         }
     }
 }

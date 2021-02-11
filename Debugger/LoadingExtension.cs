@@ -19,6 +19,11 @@ namespace ModTools
         public override void OnLevelLoaded(LoadMode mode)
         {
             base.OnLevelLoaded(mode);
+            Load();
+        }
+
+        public static void Load()
+        {
             CustomPrefabs.Bootstrap();
             var appMode = Singleton<ToolManager>.instance.m_properties.m_mode;
             var modTools = MainWindow.Instance;

@@ -5,6 +5,7 @@ namespace ModTools
     using System.Linq;
     using System;
     using UnityEngine;
+    using UnityEngine.SceneManagement;
 
     /// <summary>
     /// Dummy class to help store values for debuging purposes.
@@ -40,6 +41,7 @@ namespace ModTools
 
         public float ScreenWidth => Screen.width;
         public float ScreenHeight => Screen.height;
+        public string Scene => SceneManager.GetActiveScene().name;
 
         public Test()
         {

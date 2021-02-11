@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using ColossalFramework;
+﻿using ColossalFramework;
 using ColossalFramework.UI;
 using ModTools.Utils;
 using UnityEngine;
@@ -82,6 +79,15 @@ namespace ModTools
             bar.Hide();
 
             fullscreenContainer = UIView.Find("FullScreenContainer");
+        }
+
+        public void OnDestroy()
+        {
+            Destroy(button.gameObject);
+            button = null;
+            Destroy(bar.gameObject);
+            bar = null;
+            fullscreenContainer = null;
         }
 
         public void Update()
