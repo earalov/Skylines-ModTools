@@ -14,7 +14,7 @@ namespace ModTools.Explorer
         private const float WindowBottomMargin = 8.0f;
 
         private const float HeaderHeightCompact = 1.65f;
-        private const float HeaderHeightExpanded = 13.75f;
+        private const float HeaderHeightExpanded = 19.8f; // 13.75
 
         private const float SceneTreeWidth = 320.0f;
 
