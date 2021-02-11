@@ -271,10 +271,17 @@ namespace ModTools.Explorer
                 configChanged = true;
             }
 
-            var highlightHoveredMember = GUILayout.Toggle(MainWindow.Instance.Config.HighlightHoveredMember, " Highligh hovered member");
+            var highlightHoveredMember = GUILayout.Toggle(MainWindow.Instance.Config.HighlightHoveredMember, " Highlight hovered member");
             if (highlightHoveredMember != MainWindow.Instance.Config.HighlightHoveredMember)
             {
                 MainWindow.Instance.Config.HighlightHoveredMember = highlightHoveredMember;
+                configChanged = true;
+            }
+
+            var submitNumbersOnEnter = GUILayout.Toggle(MainWindow.Instance.Config.SubmitNumbersOnEnter, " Submit numbers on enter");
+            if (submitNumbersOnEnter != MainWindow.Instance.Config.SubmitNumbersOnEnter)
+            {
+                MainWindow.Instance.Config.SubmitNumbersOnEnter = submitNumbersOnEnter;
                 configChanged = true;
             }
 

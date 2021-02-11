@@ -195,21 +195,23 @@ namespace ModTools.UI
             return result;
         }
 
-        public static T NumericValueField<T>(string id, string name, T value)
-            where T : struct, IConvertible
-        {
-            return (T)NumericValueField(id, name, (object)value);
-        }
-
         private static bool EnterPressed()
         {
             var keycode = Event.current.keyCode;
             return keycode == KeyCode.KeypadEnter || keycode == KeyCode.Return;
         }
 
+        public static T NumericValueField<T>(string id, string name, T value)
+            where T : struct, IConvertible
+        {
+            return (T)NumericValueField(id, name, (object)value);
+        }
+
         /// <summary>
         /// value gets updated only after user presses enter.
         /// if the field looses focus any other way, the value is discarded.
+        /// if the value is not valid, then (error) is disabled infront of the field.
+        /// if user has disabled option submit on enter, then value updates only if it is valid.
         /// </summary>
         private static object NumericValueField(string id, string name, object value)
         {
@@ -237,9 +239,6 @@ namespace ModTools.UI
                         {
                             // only apply numeric value if user presses enter.
                             value = result;
-#if DEBUG
-                            Debug.Log("Applied last value");
-#endif
                         }
 
                         lastValue = null;
@@ -249,11 +248,6 @@ namespace ModTools.UI
                 {
                     // discard last value if user did not use enter to submit results
                     lastValue = null;
-#if DEBUG
-                    Debug.Log($"discarded last value " +
-                        $"focusedFieldId='{focusedFieldId}' lastFocusedFieldId='{lastFocusedFieldId}' " +
-                        $"enter='{EnterPressed()}'");
-#endif
                 }
             }
 
@@ -268,6 +262,17 @@ namespace ModTools.UI
                 GUI.SetNextControlName(id);
                 lastValue = GUILayout.TextField(lastValue, GUILayout.Width(fieldSize), GUILayout.Height(22f));
                 lastValue = ParseHelper.RemoveInvalidChars(lastValue, valueType);
+
+                if (ParseHelper.TryParse(lastValue, valueType, out object result))
+                {
+                    if (!Config.SubmitNumbersOnEnter)
+                        value = result; // auto-submit
+                }
+                else
+                {
+                    GUI.contentColor = Config.ConsoleErrorColor;
+                    GUILayout.Label("(invalid number)");
+                }
 
                 lastFocusedFieldId = focusedFieldId;
             }

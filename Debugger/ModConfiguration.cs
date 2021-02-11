@@ -141,6 +141,9 @@ namespace ModTools
         [XmlElement("sceneExplorerHighlightHoveredMember")]
         public bool HighlightHoveredMember { get; set; }
 
+        [XmlElement("sceneExplorerSubmitNumbersOnEnter")]
+        public bool SubmitNumbersOnEnter { get; set; }
+
         #region Appearance
 
         [XmlElement("sceneExplorerTreeIdentSpacing")]

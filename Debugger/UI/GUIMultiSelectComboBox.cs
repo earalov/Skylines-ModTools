@@ -83,8 +83,6 @@
             return new Vector2(width + 60, height + 36);
         }
 
-
-
         public static void MultiSelectList(MultiSelectItem[] items)
         {
             if (items == null)
