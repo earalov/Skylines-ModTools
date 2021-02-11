@@ -42,7 +42,7 @@ namespace ModTools
                 var modTools = mainWindowObject.AddComponent<MainWindow>();
                 modTools.Initialize();
 #if DEBUG
-                AExplore.Create();
+                Test.Create();
 #endif
             }
             catch (Exception e)
@@ -67,7 +67,7 @@ namespace ModTools
                 mainObject = null;
             }
 #if DEBUG
-            AExplore.Release();
+            Test.Release();
 #endif
         }
     }

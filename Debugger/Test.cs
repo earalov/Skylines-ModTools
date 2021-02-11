@@ -1,15 +1,27 @@
 ﻿#if DEBUG
-namespace ModTools {
-    using UnityEngine;
+namespace ModTools 
+{
     using System.Collections.Generic;
     using System.Linq;
+    using System;
+    using UnityEngine;
 
     /// <summary>
     /// Dummy class to help store values for debuging purposes.
     /// </summary>
-    public class AExplore : MonoBehaviour
+    public class Test : MonoBehaviour
     {
-        public static AExplore Instance;
+        [Flags]
+        public enum TestFlags : long
+        {
+            None = 0,
+            A = 1,
+            B = 2,
+            C = 4,
+            D = -8000000000000000L,
+        }
+
+        public static Test Instance;
         public List<NetInfo.Node> Nodes = new List<NetInfo.Node>();
         public ICollection<NetInfo.Node> Nodes2;
         public IEnumerable<NetInfo.Node> Nodes3;
@@ -24,8 +36,10 @@ namespace ModTools {
 
         public NetNode.Flags NodeFlags;
         public TextAnchor Anchor;
+        public TestFlags testFlags;
 
-        public AExplore()
+
+        public Test()
         {
             for (int i = 0; i < 100; ++i)
             {
@@ -37,9 +51,9 @@ namespace ModTools {
         }
 
         public static void Create() {
-            var myObject = new GameObject(nameof(AExplore));
+            var myObject = new GameObject(nameof(Test));
             DontDestroyOnLoad(myObject);
-            Instance = myObject.AddComponent<AExplore>();
+            Instance = myObject.AddComponent<Test>();
         }
 
         public static void Release() {

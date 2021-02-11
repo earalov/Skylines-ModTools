@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using ColossalFramework.UI;
-using ModTools.Explorer;
-using ModTools.Utils;
-using UnityEngine;
-
-namespace ModTools
+﻿namespace ModTools
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using ColossalFramework.UI;
+    using ModTools.Explorer;
+    using ModTools.Utils;
+    using UnityEngine;
+
     internal sealed class DebugRenderer : MonoBehaviour, IGameObject, IUIObject
     {
         private readonly List<UIComponent> hoveredComponents = new List<UIComponent>();
@@ -19,7 +20,46 @@ namespace ModTools
 
         private long previousHash = 0;
 
+        private List<UIComponent> visibleComponents = new List<UIComponent>();
+        private List<UIComponent> topLevelComponents = new List<UIComponent>();
+
         public bool DrawDebugInfo { get; set; }
+
+        private List<UIComponent> GetVisibleComponents()
+        {
+            topLevelComponents.Clear();
+            for (int i = 0; i < this.transform.childCount; ++i)
+            {
+                UIComponent c = transform.GetChild(i).GetComponent<UIComponent>();
+                if (c && c.isVisibleSelf)
+                    topLevelComponents.Add(c);
+            }
+
+            topLevelComponents.Sort(RenderSortFunc);
+
+            visibleComponents.Clear();
+            foreach (UIComponent c in topLevelComponents)
+            {
+                if (c.isActiveAndEnabled && c.isInteractive /*&& c.name != "FullScreenContainer"*/)
+                    visibleComponents.Add(c);
+                TraverseRecursive(c);
+            }
+
+            return visibleComponents;
+        }
+
+        private void TraverseRecursive(UIComponent parent)
+        {
+            foreach (var c in parent.components)
+            {
+                if (c && c.isVisibleSelf)
+                {
+                    if (c.isActiveAndEnabled && c.isInteractive /*&& c.name != "PauseOutline"*/)
+                        visibleComponents.Add(c);
+                    TraverseRecursive(c);
+                }
+            }
+        }
 
         public void Update()
         {
@@ -86,40 +126,16 @@ namespace ModTools
                 };
             }
 
-            var uiView = FindObjectOfType<UIView>();
-
-            if (uiView == null)
-            {
-                return;
-            }
-
-            var components = GetComponentsInChildren<UIComponent>();
-            Array.Sort(components, RenderSortFunc);
+            var components = GetVisibleComponents();
 
             var mouse = Input.mousePosition;
             mouse.y = Screen.height - mouse.y;
 
             hoveredComponents.Clear();
             long hash = 0;
-            for (var i = components.Length - 1; i > 0; i--)
+            for (var i = components.Count - 1; i > 0; i--)
             {
                 var component = components[i];
-
-                if (!component.isVisible)
-                {
-                    continue;
-                }
-
-                if (component.name == "FullScreenContainer")
-                {
-                    continue;
-                }
-
-                if (component.name == "PauseOutline")
-                {
-                    continue;
-                }
-
                 var position = component.absolutePosition;
                 var size = component.size;
                 var rect = CalculateRealComponentRect(position, size);
@@ -143,11 +159,6 @@ namespace ModTools
 
             foreach (var component in components)
             {
-                if (!component.isVisible)
-                {
-                    continue;
-                }
-
                 var position = component.absolutePosition;
                 var size = component.size;
                 var rect = CalculateRealComponentRect(position, size);
