@@ -17,7 +17,7 @@ namespace ModTools
         private static MainWindow instance;
         private static bool loggingInitialized;
 
-        private readonly ModalUI modalUI = new ModalUI();
+        private ModalUI modalUI = new ModalUI();
 
         private CustomConsole console;
         private ScriptEditor scriptEditor;
@@ -94,6 +94,12 @@ namespace ModTools
                 console = gameObject.AddComponent<CustomConsole>();
                 Logger.SetCustomLogger(console);
             }
+        }
+
+        private void OnDestroy()
+        {
+            modalUI?.Release();
+            modalUI = null;
         }
 
         public void Update()

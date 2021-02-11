@@ -1,4 +1,5 @@
 ﻿using ColossalFramework.UI;
+using UnityEngine;
 
 namespace ModTools
 {
@@ -20,10 +21,12 @@ namespace ModTools
             if (modalView == null)
             {
                 modalView = UIView.GetAView()?.AddUIComponent(typeof(UILabel));
-                if (modalView == null)
+                if (!modalView)
                 {
                     return;
                 }
+
+                modalView.isInteractive = false;
             }
 
             if (middleButtonState != MouseButtonState.None)
@@ -45,5 +48,7 @@ namespace ModTools
                 UIView.PopModal();
             }
         }
+
+        public void Release() => Object.Destroy(modalView?.gameObject);
     }
 }
