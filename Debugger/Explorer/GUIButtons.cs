@@ -503,7 +503,7 @@ namespace ModTools.Explorer
                 MeshViewer.CreateMeshViewer(null, mesh, null);
             }
 
-            if (mesh.isReadable && GUILayout.Button("Dump .obj"))
+            if (mesh.isReadable && GUILayout.Button("Dump mesh"))
             {
                 var outPath = refChain.ToString().Replace(' ', '_');
                 DumpUtil.DumpMeshAndTextures(outPath, mesh);

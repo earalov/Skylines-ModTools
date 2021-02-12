@@ -94,7 +94,7 @@
         <PropertyGroup>
             <DeployDir>$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)\</DeployDir>
         </PropertyGroup>
-        <Message Text="removing deploy directory" Importance="high"/>
-        <RemoveDir Directories="$(DeployDir)"/>
+        <Message Text="removing deploy directory" Importance="high" />
+        <RemoveDir Directories="$(DeployDir)" />
     </Target>
 </Project>

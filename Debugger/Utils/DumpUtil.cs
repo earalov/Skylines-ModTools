@@ -3,6 +3,7 @@ using System.IO;
 using ColossalFramework.IO;
 using ObjUnity3D;
 using UnityEngine;
+using FbxUtil;
 
 namespace ModTools.Utils
 {
@@ -15,6 +16,7 @@ namespace ModTools.Utils
             if (mesh?.isReadable == true)
             {
                 DumpMeshToOBJ(mesh, $"{assetName}.obj");
+                DumpMeshToFBX(mesh, $"{assetName}.fbx");
             }
 
             if (material != null)
@@ -33,16 +35,8 @@ namespace ModTools.Utils
             DumpAPR(assetName, (Texture2D)material.GetTexture("_APRMap"));
         }
 
-        public static void DumpMeshToOBJ(Mesh mesh, string fileName)
+        public static Mesh GetReadable(this Mesh mesh)
         {
-            fileName = Path.Combine(Path.Combine(DataLocation.addonsPath, "Import"), fileName);
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
-
-            var meshToDump = mesh;
-
             if (!mesh.isReadable)
             {
                 Logger.Warning($"Mesh \"{mesh.name}\" is marked as non-readable, running workaround..");
@@ -50,7 +44,7 @@ namespace ModTools.Utils
                 try
                 {
                     // copy the relevant data to the temporary mesh
-                    meshToDump = new Mesh
+                    var mesh2 = new Mesh
                     {
                         vertices = mesh.vertices,
                         colors = mesh.colors,
@@ -58,19 +52,53 @@ namespace ModTools.Utils
                         normals = mesh.normals,
                         tangents = mesh.tangents,
                     };
-                    meshToDump.RecalculateBounds();
+                    mesh2.RecalculateBounds();
+                    mesh2.name = mesh.name;
+                    return mesh2;
                 }
                 catch (Exception ex)
                 {
                     Logger.Error($"Workaround failed with error - {ex.Message}");
-                    return;
+                    return null;
                 }
             }
+            return mesh;
+        }
 
+        public static void DumpMeshToOBJ(Mesh mesh, string fileName)
+        {
             try
             {
+                fileName = Path.Combine(Path.Combine(DataLocation.addonsPath, "Import"), fileName);
+                if (File.Exists(fileName))
+                {
+                    File.Delete(fileName);
+                }
+
+                mesh = mesh.GetReadable();
                 using var stream = new FileStream(fileName, FileMode.Create);
-                OBJLoader.ExportOBJ(meshToDump.EncodeOBJ(), stream);
+                OBJLoader.ExportOBJ(mesh.EncodeOBJ(), stream);
+                Logger.Warning($"Dumped mesh \"{mesh.name}\" to \"{fileName}\"");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"There was an error while trying to dump mesh \"{mesh.name}\" - {ex.Message}");
+            }
+        }
+
+        public static void DumpMeshToFBX(Mesh mesh, string fileName)
+        {
+            try
+            {
+                fileName = Path.Combine(Path.Combine(DataLocation.addonsPath, "Import"), fileName);
+                if (File.Exists(fileName))
+                {
+                    File.Delete(fileName);
+                }
+
+                mesh = mesh.GetReadable();
+                using var stream = new FileStream(fileName, FileMode.Create);
+                mesh.ExportAsciiFbx(stream);
                 Logger.Warning($"Dumped mesh \"{mesh.name}\" to \"{fileName}\"");
             }
             catch (Exception ex)

@@ -10,6 +10,8 @@ namespace ModTools.Utils
 {
     internal static class FileUtil
     {
+        public static string PlugingPath => FindPluginPath(typeof(ModToolsMod));
+
         public static List<string> ListFilesInDirectory(string path, List<string> filesMustBeNull = null)
         {
             filesMustBeNull ??= new List<string>();

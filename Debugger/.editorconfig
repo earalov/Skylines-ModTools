@@ -67,5 +67,8 @@ dotnet_diagnostic.SA1117.severity = none
 # CA1062: Validate arguments of public methods
 dotnet_diagnostic.CA1062.severity = none
 
+# SA1124: Do not use regions
+dotnet_diagnostic.SA1124.severity = none
+
 [*.xml]
 indent_size = 2
