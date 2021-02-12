@@ -5,14 +5,12 @@ using ColossalFramework.Plugins;
 using ICities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using ModTools.Utils;
+using ModTools.UI;
 
 namespace ModTools
 {
     public sealed class ModToolsMod : IUserMod
    {
-        private static ModConfiguration Config => MainWindow.Instance.Config;
-
         public const string ModToolsName = "ModTools";
 
         private GameObject mainWindowObject;
@@ -51,7 +49,7 @@ namespace ModTools
 #endif
 
                 string scene = SceneManager.GetActiveScene().name;
-                if(scene != "IntroScreen" && scene != "Startup")
+                if (scene != "IntroScreen" && scene != "Startup")
                 {
                     // hot reload:
                     LoadingExtension.Load();
@@ -87,36 +85,6 @@ namespace ModTools
             UnityEngine.Object.Destroy(UnityEngine.Object.FindObjectOfType<SelectionToolControl>());
         }
 
-
-        public void OnSettingsUI(UIHelper helper)
-        {
-            helper.AddButton("Reset all settings", () =>
-             {
-                 MainWindow.Instance.Config = new ModConfiguration();
-                 MainWindow.Instance.SaveConfig();
-             });
-
-            helper.AddCheckbox("Scale to resolution", MainWindow.Instance.Config.ScaleToResolution, val =>
-            {
-                MainWindow.Instance.Config.ScaleToResolution = val;
-                MainWindow.Instance.SaveConfig();
-            });
-
-            UISlider scaleSlider = null;
-            scaleSlider = helper.AddSlider2(
-                "UI Scale",
-                25, 400, 10,
-                Config.UIScale * 100,
-                val =>
-                {
-                    if (Config.UIScale != val)
-                    {
-                        Config.UIScale = val * 0.01f;
-                        MainWindow.Instance.SaveConfig();
-                    }
-
-                    return "%" + val;
-                });
-        }
+        public void OnSettingsUI(UIHelper helper) => SettingsUI.OnSettingsUI(helper);
     }
 }

@@ -7,6 +7,7 @@
     using ModTools.Explorer;
     using ModTools.Utils;
     using UnityEngine;
+    using ModTools.UI;
 
     internal sealed class DebugRenderer : MonoBehaviour, IGameObject, IUIObject
     {
@@ -208,8 +209,8 @@
             }
 
             GUI.color = Color.cyan;
-            GUILayout.Label("[Press Ctrl+F to show in SceneExplorer]");
-            GUILayout.Label("[Press Ctrl+G to iterate]");
+            GUILayout.Label($"[Press {SettingsUI.ShowComponentKey} to show in SceneExplorer]");
+            GUILayout.Label($"[Press {SettingsUI.IterateComponentKey} to iterate]");
 
             GUILayout.Label($"name: {hoveredComponent.name}");
             GUILayout.Label($"type: {hoveredComponent.GetType().Name}");

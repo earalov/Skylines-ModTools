@@ -2,6 +2,7 @@
 using ColossalFramework.UI;
 using ModTools.Utils;
 using UnityEngine;
+using ModTools.UI;
 
 namespace ModTools
 {
@@ -120,13 +121,8 @@ namespace ModTools
                 return;
             }
 
-            if (!Input.GetKey(KeyCode.RightControl) && !Input.GetKey(KeyCode.LeftControl) ||
-                !Input.GetKeyDown(KeyCode.M))
-            {
-                return;
-            }
-
-            ToggleTool();
+            if (SettingsUI.SelectionToolKey.IsKeyUp())
+                ToggleTool();
         }
 
         private static Texture2D GetTextureByName(string name, UITextureAtlas atlas)
