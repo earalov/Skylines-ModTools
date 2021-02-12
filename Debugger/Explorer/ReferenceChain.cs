@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModTools.Utils;
+using System;
 using System.Collections;
 using System.Reflection;
 using System.Text;
@@ -238,7 +239,12 @@ namespace ModTools.Explorer
 
                         break;
 
-                    case ReferenceType.SpecialNamedProperty:
+                    case ReferenceType.SpecialNamedProperty when current is Material material:
+                        current = ShaderUtil.GetProperty(material, (string)chainObjects[i]);
+                        break;
+                    default:
+                        Logger.Error($"unhandled case in refchain: " +
+                            $"index={i} target=\"{current}\" ReferenceType=\"{chainTypes[i]}\"");
                         break;
                 }
             }

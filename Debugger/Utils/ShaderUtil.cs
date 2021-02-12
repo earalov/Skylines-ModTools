@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -54,5 +55,37 @@ namespace ModTools.Utils
         public static int CountBoundProperties(this Material material) => Call<int>("CountBoundProperties", material);
 
         private static T Call<T>(string name, params object[] parameters) => (T)Methods[name].Invoke(null, parameters);
+
+        public static object GetProperty(Material material, string propName)
+        {
+            try
+            {
+                if (GetTextureProperties().Contains(propName))
+                {
+                    return material.GetTexture(propName);
+                }
+                else if (GetColorProperties().Contains(propName))
+                {
+                    return material.GetColor(propName);
+                }
+                else if (GetVectorProperties().Contains(propName))
+                {
+                    return material.GetVector(propName);
+                }
+                else if (GetFloatProperties().Contains(propName))
+                {
+                    return material.GetFloat(propName);
+                }
+                
+                Logger.Error($"unknown property \"{propName}\"");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"There was an error while trying to get property \"{propName}\" - {ex.Message}");
+            }
+
+            return null;
+        }
+
     }
 }

@@ -16,9 +16,11 @@ namespace ModTools.Explorer
             switch (value)
             {
                 case null:
-                    if (GUILayout.Button("Watch")) {
+                    if (GUILayout.Button("Watch"))
+                    {
                         MainWindow.Instance.Watches.AddWatch(refChain);
                     }
+
                     return;
 
                 case PrefabInfo prefabInfo:
@@ -35,11 +37,11 @@ namespace ModTools.Explorer
                     break;
 
                 case NetInfo.Segment segmentInfo:
-                    SetupMeshPreviewButtons(name: null, segmentInfo.m_mesh, segmentInfo.m_material, segmentInfo.m_lodMesh, segmentInfo.m_lodMaterial);
+                    SetupSegmentButtons(refChain, segmentInfo);
                     break;
 
                 case NetInfo.Node nodeInfo:
-                    SetupMeshPreviewButtons(name: null, nodeInfo.m_mesh, nodeInfo.m_material, nodeInfo.m_lodMesh, nodeInfo.m_lodMaterial);
+                    SetupNodeButtons(refChain, nodeInfo);
                     break;
 
                 case BuildingInfo.MeshInfo buildingSumMeshInfo:
@@ -147,19 +149,19 @@ namespace ModTools.Explorer
                     break;
 
                 case Texture texture:
-                    SetupTexturePreviewButtons(texture);
+                    SetupTextureButtons(texture);
                     break;
 
                 case UITextureAtlas.SpriteInfo spriteInfo:
-                    SetupTexturePreviewButtons(spriteInfo.texture);
+                    SetupTextureButtons(spriteInfo.texture);
                     break;
 
                 case UITextureSprite textureSprite:
-                    SetupTexturePreviewButtons(textureSprite.texture);
+                    SetupTextureButtons(textureSprite.texture);
                     break;
 
                 case Mesh mesh:
-                    SetupMeshPreviewButtons(refChain, mesh);
+                    SetupMeshButtons(refChain, mesh);
                     break;
             }
 
@@ -496,7 +498,7 @@ namespace ModTools.Explorer
             sceneExplorer.Show(ReferenceChainBuilder.Optimize(refChain, value));
         }
 
-        private static void SetupMeshPreviewButtons(ReferenceChain refChain, Mesh mesh)
+        private static void SetupMeshButtons(ReferenceChain refChain, Mesh mesh)
         {
             if (GUILayout.Button("Preview"))
             {
@@ -510,7 +512,7 @@ namespace ModTools.Explorer
             }
         }
 
-        private static void SetupTexturePreviewButtons(Texture texture)
+        private static void SetupTextureButtons(Texture texture)
         {
             if (GUILayout.Button("Preview"))
             {
@@ -521,6 +523,51 @@ namespace ModTools.Explorer
             {
                 TextureUtil.DumpTextureToPNG(texture);
             }
+        }
+
+        private static void SetupSegmentButtons(ReferenceChain refChain, NetInfo.Segment segmentInfo)
+        {
+            try
+            {
+                Debug.Log("SetupSegmentButtons() called");
+                if (segmentInfo.m_mesh != null && segmentInfo.m_mesh.isReadable && GUILayout.Button("Dump"))
+                {
+                    var outPath = refChain.ToString().Replace(' ', '_');
+                    DumpUtil.DumpMeshAndTextures(
+                        outPath,
+                        segmentInfo.m_mesh,
+                        segmentInfo.m_material);
+                    DumpUtil.DumpMeshAndTextures(
+                        outPath + "_lod",
+                        segmentInfo.m_lodMesh,
+                        segmentInfo.m_lodMaterial);
+                }
+
+                SetupMeshPreviewButtons(name: null, segmentInfo.m_mesh, segmentInfo.m_material, segmentInfo.m_lodMesh, segmentInfo.m_lodMaterial);
+                Debug.Log("SetupSegmentButtons() successful");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
+        }
+
+        private static void SetupNodeButtons(ReferenceChain refChain, NetInfo.Node nodeInfo)
+        {
+            if (nodeInfo.m_mesh != null && nodeInfo.m_mesh.isReadable && GUILayout.Button("Dump"))
+            {
+                var outPath = refChain.ToString().Replace(' ', '_');
+                DumpUtil.DumpMeshAndTextures(
+                    outPath,
+                    nodeInfo.m_mesh,
+                    nodeInfo.m_material);
+                DumpUtil.DumpMeshAndTextures(
+                    outPath + "_lod",
+                    nodeInfo.m_lodMesh,
+                    nodeInfo.m_lodMaterial);
+            }
+
+            SetupMeshPreviewButtons(name: null, nodeInfo.m_mesh, nodeInfo.m_material, nodeInfo.m_lodMesh, nodeInfo.m_lodMaterial);
         }
 
         private static void SetupButtonsForPrefab(PrefabInfo prefabInfo)

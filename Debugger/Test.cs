@@ -39,6 +39,8 @@ namespace ModTools
         public TextAnchor Anchor;
         public TestFlags testFlags;
 
+        public NetInfo.Segment segmentInfo = new NetInfo.Segment();
+
         public float ScreenWidth => Screen.width;
         public float ScreenHeight => Screen.height;
         public string Scene => SceneManager.GetActiveScene().name;
