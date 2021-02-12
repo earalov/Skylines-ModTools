@@ -25,7 +25,7 @@ namespace ModTools
         private DebugRenderer debugRenderer;
 
         public MainWindow()
-            : base("Mod Tools " + ModToolsMod.Version, new Rect(128, 128, 356, 320), resizable: false)
+            : base("Mod Tools " + ModToolsMod.Version, new Rect(128, 128, 356, 340), resizable: false)
         {
         }
 
@@ -96,7 +96,7 @@ namespace ModTools
             }
         }
 
-        private void OnDestroy()
+        public void OnDestroy()
         {
             modalUI?.Release();
             modalUI = null;

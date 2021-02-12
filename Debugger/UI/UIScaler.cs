@@ -6,15 +6,42 @@
 
     public static class UIScaler
     {
-        public const float GUI_WIDTH = 1920f;
-        public const float GUI_HEIGHT = 1080f;
+        public const float DEFAULT_WIDTH = 1920f;
+
+        public const float DEFAULT_HEIGHT = 1080f;
+
+        private static ModConfiguration Config => MainWindow.Instance.Config;
+
+        public static float MaxWidth
+        {
+            get
+            {
+                float ret =
+                    Config.ScaleToResolution ?
+                    DEFAULT_WIDTH :
+                    Screen.width;
+                return ret / MainWindow.Instance.Config.UIScale;
+            }
+        }
+
+        public static float MaxHeight
+        {
+            get
+            {
+                float ret =
+                    Config.ScaleToResolution ?
+                    DEFAULT_HEIGHT :
+                    Screen.height;
+                return ret / MainWindow.Instance.Config.UIScale;
+            }
+        }
 
         public static float UIScale
         {
             get
             {
-                var w = Screen.width * (1 / GUI_WIDTH);
-                var h = Screen.height * (1 / GUI_HEIGHT);
+                var w = Screen.width * (1 / MaxWidth);
+                var h = Screen.height * (1 / MaxHeight);
                 return Mathf.Min(w, h);
             }
         }
@@ -30,20 +57,5 @@
                 return mouse / UIScaler.UIScale;
             }
         }
-
-        //public static Rect Scale2UI(this Rect rect) =>
-        //    rect.Scale(ScaleFactor);
-
-        //public static Rect ScaleBack2UI(this Rect rect) =>
-        //    rect.Scale(1/ScaleFactor);
-
-        //public static Rect Scale(this Rect rect, float scale)
-        //{
-        //    rect.x *= scale;
-        //    rect.y *= scale;
-        //    rect.width *= scale;
-        //    rect.height *= scale;
-        //    return rect;
-        //}
     }
 }

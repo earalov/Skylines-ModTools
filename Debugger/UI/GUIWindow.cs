@@ -293,12 +293,16 @@ namespace ModTools.UI
 
         private void FitScreen()
         {
-            windowRect.width = Mathf.Clamp(windowRect.width, minSize.x, UIScaler.GUI_WIDTH);
-            windowRect.height = Mathf.Clamp(windowRect.height, minSize.y, UIScaler.GUI_HEIGHT);
-            windowRect.x = Mathf.Clamp(windowRect.x, 0, UIScaler.GUI_WIDTH);
-            windowRect.y = Mathf.Clamp(windowRect.y, 0, UIScaler.GUI_HEIGHT);
+            windowRect.width = Mathf.Clamp(windowRect.width, minSize.x, UIScaler.MaxWidth);
+            windowRect.height = Mathf.Clamp(windowRect.height, minSize.y, UIScaler.MaxHeight);
+            windowRect.x = Mathf.Clamp(windowRect.x, 0, UIScaler.MaxWidth);
+            windowRect.y = Mathf.Clamp(windowRect.y, 0, UIScaler.MaxHeight);
+            if(windowRect.xMax > UIScaler.MaxWidth)
+            {
+                windowRect.x = UIScaler.MaxWidth - windowRect.width;
+                windowRect.y = UIScaler.MaxHeight - windowRect.height;
+            }
         }
-
 
         private void DrawTitlebar(Vector3 mouse)
         {
@@ -333,7 +337,7 @@ namespace ModTools.UI
                 else if (moveRect.Contains(mouse))
                 {
                     moveTex = MoveHoverTexture;
-                    if (Input.GetMouseButton(0) && resizingWindow == null)
+                    if (Input.GetMouseButtonDown(0) && resizingWindow == null)
                     {
                         movingWindow = this;
                         moveDragHandle = new Vector2(windowRect.x, windowRect.y) - new Vector2(mouse.x, mouse.y);
@@ -402,7 +406,7 @@ namespace ModTools.UI
                 else if (resizeRect.Contains(mouse))
                 {
                     resizeTex = ResizeHoverTexture;
-                    if (Input.GetMouseButton(0))
+                    if (Input.GetMouseButtonDown(0))
                     {
                         resizingWindow = this;
                         resizeDragHandle = 

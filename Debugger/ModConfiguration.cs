@@ -29,6 +29,12 @@ namespace ModTools
 
         #region Appearance
 
+        [XmlElement("UIScale")]
+        public float UIScale { get; set; } = 1f;
+
+        [XmlElement("ScaleToResolution")]
+        public bool ScaleToResolution { get; set; } = true;
+
         [XmlElement("fontName")]
         public string FontName { get; set; } = "Courier New Bold";
 
