@@ -12,9 +12,6 @@ namespace ModTools.UI
         private const float ByteFieldSize = 40f;
         private const float CharFieldSize = 25f;
 
-        private static string lastFocusedFieldId;
-        private static string lastValue;
-
         public delegate T ValuePresenterDelegate<T>(string id, T value)
             where T : struct;
 
@@ -195,24 +192,10 @@ namespace ModTools.UI
             return result;
         }
 
-        private static bool EnterPressed()
-        {
-            var keycode = Event.current.keyCode;
-            return keycode == KeyCode.KeypadEnter || keycode == KeyCode.Return;
-        }
-
         public static T NumericValueField<T>(string id, string name, T value)
-            where T : struct, IConvertible
-        {
-            return (T)NumericValueField(id, name, (object)value);
-        }
+            where T : struct, IConvertible =>
+            (T)NumericValueField(id, name, (object)value);
 
-        /// <summary>
-        /// value gets updated only after user presses enter.
-        /// if the field looses focus any other way, the value is discarded.
-        /// if the value is not valid, then (error) is disabled infront of the field.
-        /// if user has disabled option submit on enter, then value updates only if it is valid.
-        /// </summary>
         private static object NumericValueField(string id, string name, object value)
         {
             GUILayout.BeginHorizontal();
@@ -225,57 +208,9 @@ namespace ModTools.UI
 
             GUI.contentColor = Config.ValueColor;
 
-            var valueType = value.GetType();
-            var fieldSize = GetTextFieldSize(valueType);
-            var focusedFieldId = GUI.GetNameOfFocusedControl();
+            var fieldSize = GetTextFieldSize(value.GetType());
 
-            if (lastValue != null)
-            {
-                if (string.IsNullOrEmpty(focusedFieldId) && EnterPressed())
-                {
-                    if (id == lastFocusedFieldId)
-                    {
-                        if (ParseHelper.TryParse(lastValue, valueType, out object result))
-                        {
-                            // only apply numeric value if user presses enter.
-                            value = result;
-                        }
-
-                        lastValue = null;
-                    }
-                }
-                else if (lastFocusedFieldId != focusedFieldId || string.IsNullOrEmpty(focusedFieldId))
-                {
-                    // discard last value if user did not use enter to submit results
-                    lastValue = null;
-                }
-            }
-
-            if (id != focusedFieldId)
-            {
-                GUI.SetNextControlName(id);
-                GUILayout.TextField(value.ToString(), GUILayout.Width(fieldSize), GUILayout.Height(22f));
-            }
-            else
-            {
-                lastValue ??= value.ToString();
-                GUI.SetNextControlName(id);
-                lastValue = GUILayout.TextField(lastValue, GUILayout.Width(fieldSize), GUILayout.Height(22f));
-                lastValue = ParseHelper.RemoveInvalidChars(lastValue, valueType);
-
-                if (ParseHelper.TryParse(lastValue, valueType, out object result))
-                {
-                    if (!Config.SubmitNumbersOnEnter)
-                        value = result; // auto-submit
-                }
-                else
-                {
-                    GUI.contentColor = Config.ConsoleErrorColor;
-                    GUILayout.Label("(invalid number)");
-                }
-
-                lastFocusedFieldId = focusedFieldId;
-            }
+            value = GUINumeric.NumberField(id, name, value, fieldSize);
 
             GUI.contentColor = Color.white;
 
@@ -299,9 +234,8 @@ namespace ModTools.UI
 
             GUI.contentColor = Config.ValueColor;
 
-            var fieldSize = GetTextFieldSize(typeof(string));
             GUI.SetNextControlName(id);
-            value = GUILayout.TextField(value, GUILayout.Width(fieldSize), GUILayout.Height(22f));
+            value = GUILayout.TextField(value, GUILayout.Width(StringFieldSize), GUILayout.Height(22f));
             GUI.contentColor = Color.white;
 
             GUILayout.EndHorizontal();
@@ -326,9 +260,8 @@ namespace ModTools.UI
 
             GUI.contentColor = Config.ValueColor;
 
-            var fieldSize = GetTextFieldSize(typeof(char));
             GUI.SetNextControlName(id);
-            string newValue = GUILayout.TextField(value.ToString(), GUILayout.Width(fieldSize), GUILayout.Height(22f));
+            string newValue = GUILayout.TextField(value.ToString(), GUILayout.Width(CharFieldSize), GUILayout.Height(22f));
             if (newValue.Length >= 2)
             {
                 if (newValue[0] != value)
