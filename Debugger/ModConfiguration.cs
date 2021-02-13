@@ -145,7 +145,7 @@ namespace ModTools
         public bool ShowInheritedMembers { get; set; }
 
         [XmlElement("sceneExplorerHighlightHoveredMember")]
-        public bool HighlightHoveredMember { get; set; }
+        public bool HighlightHoveredMember { get; set; } = true;
 
         [XmlElement("sceneExplorerSubmitNumbersOnEnter")]
         public bool SubmitNumbersOnEnter { get; set; }
@@ -197,7 +197,10 @@ namespace ModTools
         #endregion
 
         [XmlElement("debugRendererAutoTurnOff")]
-        public bool DebugRendererAutoTurnOff { get; set; }
+        public bool DebugRendererAutoTurnOff { get; set; } = true;
+
+        [XmlElement("debugRendererExcludeUninteractive")]
+        public bool DebugRendererExcludeUninteractive { get; set; }
 
         public static ModConfiguration Deserialize(string filename)
         {

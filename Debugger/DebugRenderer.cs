@@ -26,6 +26,8 @@
 
         public bool DrawDebugInfo { get; set; }
 
+        private static bool IncludeAll => !MainWindow.Instance.Config.DebugRendererExcludeUninteractive;
+
         private List<UIComponent> GetVisibleComponents()
         {
             topLevelComponents.Clear();
@@ -41,7 +43,7 @@
             visibleComponents.Clear();
             foreach (UIComponent c in topLevelComponents)
             {
-                if (c.isActiveAndEnabled && c.isInteractive /*&& c.name != "FullScreenContainer"*/)
+                if (IncludeAll || (c.isActiveAndEnabled && c.isInteractive))
                     visibleComponents.Add(c);
                 TraverseRecursive(c);
             }
@@ -55,7 +57,7 @@
             {
                 if (c && c.isVisibleSelf)
                 {
-                    if (c.isActiveAndEnabled && c.isInteractive /*&& c.name != "PauseOutline"*/)
+                    if (IncludeAll || (c.isActiveAndEnabled && c.isInteractive))
                         visibleComponents.Add(c);
                     TraverseRecursive(c);
                 }

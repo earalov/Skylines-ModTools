@@ -138,7 +138,8 @@ namespace ModTools
             }
             else if (SettingsUI.DebugRendererKey.IsKeyUp())
             {
-                debugRenderer ??= FindObjectOfType<UIView>().gameObject.AddComponent<DebugRenderer>();
+                if (!debugRenderer)
+                    debugRenderer = FindObjectOfType<UIView>().gameObject.AddComponent<DebugRenderer>();
                 debugRenderer.DrawDebugInfo = !debugRenderer.DrawDebugInfo;
             }
             else if (SettingsUI.WatchesKey.IsKeyUp())

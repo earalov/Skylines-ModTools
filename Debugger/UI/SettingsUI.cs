@@ -120,6 +120,15 @@
                 SaveConfig();
             });
 
+            var debugRendererIncludeAll = helper.AddCheckbox(
+                "Debug renderer excludes UI components that do not respond to mouse",
+                Config.DebugRendererExcludeUninteractive, val =>
+                {
+                    Config.DebugRendererExcludeUninteractive = val;
+                    SaveConfig();
+                }) as UIComponent;
+            debugRendererIncludeAll.tooltip = "their children will be shown either way.";
+
             var debugRendererAutoTurnOff = helper.AddCheckbox(
                 "Atomatically turn off debug renderer",
                 Config.DebugRendererAutoTurnOff, val =>
