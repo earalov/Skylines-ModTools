@@ -67,5 +67,5 @@ namespace ModTools
             Instance = null;
         }
     }
-#endif
 }
+#endif
