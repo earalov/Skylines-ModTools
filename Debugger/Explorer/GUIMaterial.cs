@@ -22,6 +22,11 @@ namespace ModTools.Explorer
                 return;
             }
 
+            GUILayout.BeginHorizontal();
+            GUI.contentColor = Color.white;
+            GUILayout.Label("Special Properties:");
+            GUILayout.EndHorizontal();
+
             foreach (var prop in ShaderUtil.GetTextureProperties())
             {
                 if (!material.HasProperty(prop))
@@ -249,6 +254,30 @@ namespace ModTools.Explorer
                 {
                     material.SetColor(prop, (Color)paste);
                 }
+            }
+
+            var shaderKeywords = material.shaderKeywords;
+            if (shaderKeywords != null && shaderKeywords.Length > 0)
+            {
+                var valueTyoe = shaderKeywords.GetType();
+
+                GUILayout.BeginHorizontal();
+                SceneExplorerCommon.InsertIndent(refChain.Indentation + 2);
+
+                GUI.contentColor = MainWindow.Instance.Config.TypeColor;
+                GUILayout.Label(valueTyoe.ToString() + " ");
+
+                GUI.contentColor = MainWindow.Instance.Config.NameColor;
+                GUILayout.Label("Shader keywords ");
+
+                GUI.contentColor = Color.white;
+                GUILayout.Label(" = ");
+
+                GUI.contentColor = MainWindow.Instance.Config.ValueColor;
+                GUILayout.Label(string.Join(", ", shaderKeywords));
+
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
             }
 
             GUIReflect.OnSceneTreeReflect(state, refChain, material, true);
