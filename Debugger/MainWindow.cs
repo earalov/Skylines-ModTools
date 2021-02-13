@@ -138,7 +138,7 @@ namespace ModTools
             }
             else if (SettingsUI.DebugRendererKey.IsKeyUp())
             {
-                debugRenderer ??= UIView.GetAView().gameObject.AddComponent<DebugRenderer>();
+                debugRenderer ??= FindObjectOfType<UIView>().gameObject.AddComponent<DebugRenderer>();
                 debugRenderer.DrawDebugInfo = !debugRenderer.DrawDebugInfo;
             }
             else if (SettingsUI.WatchesKey.IsKeyUp())
@@ -148,7 +148,6 @@ namespace ModTools
             else if (SettingsUI.ScriptEditorKey.IsKeyUp())
             {
                 scriptEditor.Visible = !scriptEditor.Visible;
-
             }
         }
 

@@ -11,7 +11,7 @@ namespace ModTools.UI
         private SavedInputKey editingBinding;
         private int count;
 
-        internal void AddKeymapping(string label, SavedInputKey savedInputKey)
+        internal UIComponent AddKeymapping(string label, SavedInputKey savedInputKey)
         {
             UIPanel uipanel = base.component.AttachUIComponent(UITemplateManager.GetAsGameObject(UIKeymappingsPanel.kKeyBindingTemplate)) as UIPanel;
             int num = this.count;
@@ -27,6 +27,7 @@ namespace ModTools.UI
             uilabel.text = label;
             uibutton.text = savedInputKey.ToLocalizedString("KEYNAME");
             uibutton.objectUserData = savedInputKey;
+            return uipanel;
         }
 
         private bool IsModifierKey(KeyCode code)

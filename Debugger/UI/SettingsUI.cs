@@ -3,43 +3,69 @@
     using System;
     using ColossalFramework.UI;
     using ICities;
-    using System.Reflection;
     using ColossalFramework;
-    using ColossalFramework.UI;
     using UnityEngine;
+
+    public class HotKey : SavedInputKey
+    {
+        public InputKey Default { get; private set; }
+
+        public HotKey(string id, KeyCode key, bool control, bool shift, bool alt)
+            : base(id, SettingsUI.FILE_NAME, key, control, shift, alt, autoUpdate: true)
+        {
+            Default = value;
+        }
+
+        public void ResetToDefault() => value = Default;
+    }
 
     public static class SettingsUI
     {
+        public static readonly HotKey MainWindowKey = new HotKey(
+            "MainWindowKey", KeyCode.Q, control: true, shift: false, alt: false);
+
+        public static readonly HotKey WatchesKey = new HotKey(
+            "WatchesKey", KeyCode.W, control: true, shift: false, alt: false);
+
+        public static readonly HotKey SceneExplorerKey = new HotKey(
+            "SceneExplorerKey", KeyCode.E, control: true, shift: false, alt: false);
+
+        public static readonly HotKey DebugRendererKey = new HotKey(
+            "DebugRendererKey", KeyCode.R, control: true, shift: false, alt: false);
+
+        public static readonly HotKey ScriptEditorKey = new HotKey(
+            "ScriptEditorKey", KeyCode.S, control: true, shift: false, alt: false);
+
+        public static readonly HotKey ShowComponentKey = new HotKey(
+            "ShowComponentKey", KeyCode.F, control: true, shift: false, alt: false);
+
+        public static readonly HotKey IterateComponentKey = new HotKey(
+            "IterateComponentKey", KeyCode.G, control: true, shift: false, alt: false);
+
+        public static readonly HotKey SelectionToolKey = new HotKey(
+            "SelectionToolKey", KeyCode.M, control: true, shift: false, alt: false);
+
+        public static readonly HotKey ConsoleKey = new HotKey(
+            "ConsoleKey", KeyCode.F7, control: false, shift: false, alt: false);
+
+        private static HotKey[] Hotkeys => new HotKey[]
+        {
+            MainWindowKey,
+            WatchesKey,
+            SceneExplorerKey,
+            DebugRendererKey,
+            ScriptEditorKey,
+            ShowComponentKey,
+            IterateComponentKey,
+            SelectionToolKey,
+            ConsoleKey,
+        };
+
+        public const string FILE_NAME = "ModTools";
+
         private static ModConfiguration Config => MainWindow.Instance.Config;
 
-        public static readonly SavedInputKey MainWindowKey = new SavedInputKey(
-            "MainWindowKey", FILE_NAME, KeyCode.Q, control: true, shift: false, alt: false, autoUpdate: true);
-
-        public static readonly SavedInputKey WatchesKey = new SavedInputKey(
-            "WatchesKey", FILE_NAME, KeyCode.W, control: true, shift: false, alt: false, autoUpdate: true);
-
-        public static readonly SavedInputKey SceneExplorerKey = new SavedInputKey(
-            "SceneExplorerKey", FILE_NAME, KeyCode.E, control: true, shift: false, alt: false, autoUpdate: true);
-
-        public static readonly SavedInputKey DebugRendererKey = new SavedInputKey(
-            "DebugRendererKey", FILE_NAME, KeyCode.R, control: true, shift: false, alt: false, autoUpdate: true);
-
-        public static readonly SavedInputKey ScriptEditorKey = new SavedInputKey(
-            "ScriptEditorKey", FILE_NAME, KeyCode.S, control: true, shift: false, alt: false, autoUpdate: true);
-
-        public static readonly SavedInputKey ShowComponentKey = new SavedInputKey(
-            "ShowComponentKey", FILE_NAME, KeyCode.F, control: true, shift: false, alt: false, autoUpdate: true);
-
-        public static readonly SavedInputKey IterateComponentKey = new SavedInputKey(
-            "IterateComponentKey", FILE_NAME, KeyCode.G, control: true, shift: false, alt: false, autoUpdate: true);
-
-        public static readonly SavedInputKey SelectionToolKey = new SavedInputKey(
-            "SelectionToolKey", FILE_NAME, KeyCode.M, control: true, shift: false, alt: false, autoUpdate: true);
-
-        public static readonly SavedInputKey ConsoleKey = new SavedInputKey(
-            "ConsoleKey", FILE_NAME, KeyCode.F7, control: false, shift: false, alt: false, autoUpdate: true);
-
-        private const string FILE_NAME = "ModTools";
+        private static void SaveConfig() => MainWindow.Instance.SaveConfig();
 
         static SettingsUI()
         {
@@ -73,7 +99,7 @@
 
             return slider;
         }
-        
+
         public static UIPanel Panel(this UIHelperBase helper) => (helper as UIHelper).self as UIPanel;
 
         public static void OnSettingsUI(UIHelper helper)
@@ -81,14 +107,27 @@
             helper.AddButton("Reset all settings", () =>
             {
                 MainWindow.Instance.Config = new ModConfiguration();
-                MainWindow.Instance.SaveConfig();
+                foreach (HotKey hotkey in Hotkeys)
+                {
+                    hotkey.ResetToDefault();
+                }
+                SaveConfig();
             });
 
-            helper.AddCheckbox("Scale to resolution", MainWindow.Instance.Config.ScaleToResolution, val =>
+            helper.AddCheckbox("Scale to resolution", Config.ScaleToResolution, val =>
             {
-                MainWindow.Instance.Config.ScaleToResolution = val;
-                MainWindow.Instance.SaveConfig();
+                Config.ScaleToResolution = val;
+                SaveConfig();
             });
+
+            var debugRendererAutoTurnOff = helper.AddCheckbox(
+                "Atomatically turn off debug renderer",
+                Config.DebugRendererAutoTurnOff, val =>
+            {
+                Config.DebugRendererAutoTurnOff = val;
+                SaveConfig();
+            }) as UIComponent;
+            debugRendererAutoTurnOff.tooltip = "turns off debug render when user shows UI component in scene explorer";
 
             helper.AddSlider2(
                 "UI Scale",
@@ -99,11 +138,17 @@
                     if (Config.UIScale != val)
                     {
                         Config.UIScale = val * 0.01f;
-                        MainWindow.Instance.SaveConfig();
+                        SaveConfig();
                     }
 
                     return "%" + val;
                 });
+            
+            helper.AddCheckbox("automatically turn off debug renderer", Config.ScaleToResolution, val =>
+            {
+                Config.ScaleToResolution = val;
+                SaveConfig();
+            });
 
             var g = helper.AddGroup("Hot Keys");
             var keymappings = g.Panel().gameObject.AddComponent<UIKeymappingsPanel>();

@@ -196,6 +196,9 @@ namespace ModTools
 
         #endregion
 
+        [XmlElement("debugRendererAutoTurnOff")]
+        public bool DebugRendererAutoTurnOff { get; set; }
+
         public static ModConfiguration Deserialize(string filename)
         {
             var serializer = new XmlSerializer(typeof(ModConfiguration));

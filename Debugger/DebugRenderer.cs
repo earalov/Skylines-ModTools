@@ -77,7 +77,7 @@
                 var sceneExplorer = FindObjectOfType<SceneExplorer>();
                 sceneExplorer.Show(refChain);
 
-                if (sceneExplorer.Visible)
+                if (MainWindow.Instance.Config.DebugRendererAutoTurnOff && sceneExplorer.Visible)
                 {
                     DrawDebugInfo = false;
                 }
