@@ -200,7 +200,7 @@ namespace ModTools
         public bool DebugRendererAutoTurnOff { get; set; } = true;
 
         [XmlElement("debugRendererExcludeUninteractive")]
-        public bool DebugRendererExcludeUninteractive { get; set; }
+        public bool DebugRendererExcludeUninteractive { get; set; } = true;
 
         public static ModConfiguration Deserialize(string filename)
         {
