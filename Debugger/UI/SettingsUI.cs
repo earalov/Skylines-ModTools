@@ -130,7 +130,7 @@
             debugRendererIncludeAll.tooltip = "their children will be shown either way.";
 
             var debugRendererAutoTurnOff = helper.AddCheckbox(
-                "Atomatically turn off debug renderer",
+                "Automatically turn off debug renderer",
                 Config.DebugRendererAutoTurnOff, val =>
             {
                 Config.DebugRendererAutoTurnOff = val;
@@ -152,12 +152,6 @@
 
                     return "%" + val;
                 });
-            
-            helper.AddCheckbox("automatically turn off debug renderer", Config.ScaleToResolution, val =>
-            {
-                Config.ScaleToResolution = val;
-                SaveConfig();
-            });
 
             var g = helper.AddGroup("Hot Keys");
             var keymappings = g.Panel().gameObject.AddComponent<UIKeymappingsPanel>();
@@ -165,6 +159,7 @@
             keymappings.AddKeymapping("Debug Console", ConsoleKey);
             keymappings.AddKeymapping("Main window", MainWindowKey);
             keymappings.AddKeymapping("Watches", WatchesKey);
+            keymappings.AddKeymapping("Script Editor", ScriptEditorKey);
             keymappings.AddKeymapping("Scene Explorer", SceneExplorerKey);
             keymappings.AddKeymapping("Debug Renderer", DebugRendererKey);
             keymappings.AddKeymapping("Debug Renderer\\show in SceneExplorer", ShowComponentKey);
