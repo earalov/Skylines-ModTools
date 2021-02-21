@@ -155,7 +155,10 @@ namespace ModTools.GamePanels
             showInExplorerButton = AddButton("Show in Scene Explorer");
             showInExplorerButton.eventClick += ShowInExplorerButtonClick;
 
-            return InitializeCore();
+            var ret =  InitializeCore();
+            UpdatePanelContent(default, default);
+            UpdatePanelSize(default, default);
+            return ret;
         }
 
         /// <summary>When overridden in derive classes, builds up the custom UI objects for the info panel.</summary>
@@ -219,11 +222,12 @@ namespace ModTools.GamePanels
             if (typeof(T) == typeof(CityServiceWorldInfoPanel))
             {
                 // This magic is required because the 'city service info panel' has a different layout,
-                // so the standard AlignTo won't do - we must align not to the panel itself, but to its child panel.
-                var wrapperPanel = infoPanelContainer.components.OfType<UIPanel>().FirstOrDefault(c => c.name == "Wrapper");
-                if (wrapperPanel != null)
+                // so the standard AlignTo won't do - we must align not to the panel itself, but to a child panel.
+                var panel2 = infoPanelContainer.Find<UIPanel>("MainBottom");
+                panel2 = panel2?.Find<UIPanel>("Panel");
+                if (panel2 != null)
                 {
-                    parentPanel = wrapperPanel;
+                    parentPanel = panel2;
                 }
             }
             else if (typeof(T) == typeof(FestivalPanel) || typeof(T) == typeof(DistrictWorldInfoPanel))
