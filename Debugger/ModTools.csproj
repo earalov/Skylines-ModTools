@@ -1,100 +1,111 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ProjectGuid>{F7D642E3-3546-47A8-AC52-4BA14E635FA9}</ProjectGuid>
+    <TargetFramework>net35</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
+    <Deterministic>false</Deterministic>
+    <AssemblyVersion>3.4.3.*</AssemblyVersion>
+    <FileAlignment>512</FileAlignment>
+    <LangVersion>latest</LangVersion>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <PathMap>$(MSBuildProjectDirectory)/=$(ProjectName)/</PathMap>
+    <Configurations>Debug;Release;Workshop</Configurations>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Workshop|AnyCPU' ">
+    <ContentID>450877484</ContentID>
+    <DefineConstants />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManagedDLLPath>../dependencies</ManagedDLLPath>
+    <SteamPath>~/Library/Application Support/Steam/</SteamPath>
+    <SteamPath Condition="! Exists ('$(SteamPath)')">$(ProgramFiles)/Steam</SteamPath>
+    <SteamPath Condition="! Exists ('$(SteamPath)')">$(Registry:HKEY_CURRENT_USER/Software/Valve/Steam@SteamPath)</SteamPath>
+    <CSPath>$(SteamPath)/steamapps/common/Cities_Skylines</CSPath>
+    <ContentPath>$(SteamPath)/steamapps/workshop/content/255710/$(ContentID)</ContentPath>
+    <ManagedDLLPath Condition="!  Exists ('$(ManagedDLLPath)')">$(CSPath)/Cities_Data/Managed</ManagedDLLPath>
+    <AssemblySearchPaths>
+      $(AssemblySearchPaths);
+      $(ManagedDLLPath);
+      $(CitiesSkylinesBinaries);
+      ../lib/
+    </AssemblySearchPaths>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="highlight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp" />
+    <Reference Include="ColossalManaged" />
+    <Reference Include="ICities" />
+    <Reference Include="UnityEngine" />
+    <Reference Include="ObjUnity3D" >
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="highlight.png" />
+    <EmbeddedResource Include="SelectionToolButton.png" />
+    <EmbeddedResource Include="SelectionToolBar.png" />
+    <Content Include="lib/ObjUnity3D.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.3" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
+    <PackageReference Include="GitInfo" Version="2.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <Target Name="DeployToModDirectory" AfterTargets="Build">
+    <Message Importance="high" Text="DeployToModDirectory ..." />
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="Targets" />
+    </GetAssemblyIdentity>
+    <ItemGroup>
+      <AuxiliaryFiles Include="$(TargetPath).mdb;$(TargetDir)ObjUnity3D.dll" />
+      <VersionNumber Include="@(Targets->'%(Version)')" />
+    </ItemGroup>
     <PropertyGroup>
-        <ProjectGuid>{F7D642E3-3546-47A8-AC52-4BA14E635FA9}</ProjectGuid>
-        <TargetFramework>net35</TargetFramework>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
-        <AssemblyName>ModTools</AssemblyName>
-        <RootNamespace>ModTools</RootNamespace>
-
-        <Deterministic>false</Deterministic>
-        <AssemblyVersion>3.4.2.*</AssemblyVersion>
-        <FileAlignment>512</FileAlignment>
-        <LangVersion>latest</LangVersion>
-        <DebugType>full</DebugType>
-        <DebugSymbols>true</DebugSymbols>
-        <PathMap>$(MSBuildProjectDirectory)\=$(ProjectName)\</PathMap>
+      <DeployDir Condition="'$(DeployDir)'==''">$(LOCALAPPDATA)/Colossal Order/Cities_Skylines/Addons/Mods/$(ProjectName)/</DeployDir>
+      <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
+      <pdb2mdb>$(PkgMono_Unofficial_pdb2mdb)/tools/pdb2mdb.exe</pdb2mdb>
+      <ZipFileName>$(ProjectName)-V@(VersionNumber)-$(GitCommit)-$(Configuration).zip</ZipFileName>
+      <ZipFile>$(DeployDir)/../$(ZipFileName)</ZipFile>
     </PropertyGroup>
+    <ItemGroup>
+      <OldZipFiles Include="$(DeployDir)/../$(ProjectName)-*-$(Configuration).zip" />
+    </ItemGroup>
+
+    <Delete Files="$(TargetPath).mdb" />
+    <Exec Command="&quot;$(pdb2mdb)&quot; &quot;$(TargetPath)&quot;" />
+    <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" />
+    <Delete Files="$(DeployDir)$(TargetFileName)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />
+    <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
+    <Delete Files="@(OldZipFiles)" />
+    <ZipDirectory SourceDirectory="$(DeployDir)" DestinationFile="$(ZipFile)" />
+  </Target>
+  <Target Name="DeployToWorkshop" AfterTargets="DeployToModDirectory" Condition="'$(ContentID)'!=''">
+    <ItemGroup>
+      <FilesToDelete Include="$(ContentPath)/*.*" Exclude="$(ContentPath)/PreviewImage.png" />
+      <FilesToCopy Include="$(DeployDir)/*.*" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(ContentPath)" />
+    <RemoveDir Directories="$(DeployDir)" />
+    <Message Importance="high" Text="Moved to $(ContentPath)" />
+  </Target>
+  <Target Name="CustomClean" BeforeTargets="CoreClean">
+    <RemoveDir Directories="$(TargetDir)" />
     <PropertyGroup>
-        <ManagedDLLPath>..\dependencies</ManagedDLLPath>
-        <SteamPath>~/Library/Application Support/Steam/</SteamPath>
-        <SteamPath Condition="! Exists ('$(SteamPath)')">$(ProgramFiles)\Steam</SteamPath>
-        <SteamPath Condition="! Exists ('$(SteamPath)')">$(Registry:HKEY_CURRENT_USER\Software\Valve\Steam@SteamPath)</SteamPath>
-        <CSPath>$(SteamPath)\steamapps\common\Cities_Skylines</CSPath>
-        <ManagedDLLPath Condition="!  Exists ('$(ManagedDLLPath)')">$(CSPath)\Cities_Data\Managed</ManagedDLLPath>
+      <DeployDir>$(LOCALAPPDATA)/Colossal Order/Cities_Skylines/Addons/Mods/$(ProjectName)/</DeployDir>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DefineConstants>TRACE;DEBUG</DefineConstants>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <DefineConstants></DefineConstants>
-    </PropertyGroup>
-    <ItemGroup>
-        <None Remove="highlight.png" />
-    </ItemGroup>
-    <ItemGroup>
-        <Reference Include="Assembly-CSharp">
-            <HintPath>$(ManagedDLLPath)\Assembly-CSharp.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="ColossalManaged">
-            <HintPath>$(ManagedDLLPath)\ColossalManaged.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="ICities">
-            <HintPath>$(ManagedDLLPath)\ICities.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="ObjUnity3D, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-            <HintPath>lib\ObjUnity3D.dll</HintPath>
-            <SpecificVersion>False</SpecificVersion>
-            <Private>true</Private>
-        </Reference>
-        <Reference Include="UnityEngine">
-            <HintPath>$(ManagedDLLPath)\UnityEngine.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="highlight.png" />
-        <EmbeddedResource Include="SelectionToolButton.png" />
-        <EmbeddedResource Include="SelectionToolBar.png" />
-        <Content Include="lib\ObjUnity3D.dll" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.3" />
-        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-    </ItemGroup>
-
-    <Target Name="DeployToModDirectory" AfterTargets="Build">
-        <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
-            <Output TaskParameter="Assemblies" ItemName="Targets" />
-        </GetAssemblyIdentity>
-        <PropertyGroup>
-            <DeployDir>$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)\</DeployDir>
-            <UnityPath>$(MSBuildExtensionsPath64)\..\Unity\</UnityPath>
-            <UnityPath Condition="! Exists ('$(UnityPath)')">..\Unity\</UnityPath>
-            <MonoDir>$(UnityPath)Editor\Data\MonoBleedingEdge\</MonoDir>
-            <Now>$([System.DateTime]::Now.ToString("h:mmtt"))</Now>
-        </PropertyGroup>
-        <ItemGroup>
-            <AuxiliaryFiles Include="$(TargetPath).mdb;$(TargetDir)ObjUnity3D.dll" />
-            <VersionNumber Include="@(Targets->'%(Version)')" />
-        </ItemGroup>
-        <Delete Files="$(TargetDir)*.mdb" />
-        <Exec Command="&quot;$(MonoDir)bin\mono.exe&quot; &quot;$(MonoDir)lib\mono\4.5\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" ContinueOnError="true" />
-        <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" />
-        <Delete Files="$(DeployDir)$(TargetFileName)" />
-        <Copy SourceFiles="$(Targetpath)" DestinationFolder="$(DeployDir)" />
-        <Message Importance="high" Text="AssemblyVersion= @(VersionNumber) time=$(Now)" />
-    </Target>
-    <Target Name="CustomClean" BeforeTargets="CoreClean">
-        <PropertyGroup>
-            <DeployDir>$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)\</DeployDir>
-        </PropertyGroup>
-        <Message Text="removing deploy directory" Importance="high" />
-        <RemoveDir Directories="$(DeployDir)" />
-    </Target>
+    <Message Text="removing deploy directory" Importance="high" />
+    <RemoveDir Directories="$(DeployDir)" />
+  </Target>
 </Project>
