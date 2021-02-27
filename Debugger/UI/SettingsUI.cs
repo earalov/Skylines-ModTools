@@ -13,7 +13,7 @@
         public HotKey(string id, KeyCode key, bool control, bool shift, bool alt)
             : base(id, SettingsUI.FILE_NAME, key, control, shift, alt, autoUpdate: true)
         {
-            Default = value;
+            Default = Encode(key, control, shift, alt);
         }
 
         public void ResetToDefault() => value = Default;
@@ -21,6 +21,16 @@
 
     public static class SettingsUI
     {
+        static SettingsUI()
+        {
+            if (GameSettings.FindSettingsFileByName(FILE_NAME) == null)
+            {
+                GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = FILE_NAME } });
+            }
+        }
+
+        public const string FILE_NAME = "ModTools";
+
         public static readonly HotKey MainWindowKey = new HotKey(
             "MainWindowKey", KeyCode.Q, control: true, shift: false, alt: false);
 
@@ -61,19 +71,9 @@
             ConsoleKey,
         };
 
-        public const string FILE_NAME = "ModTools";
-
         private static ModConfiguration Config => MainWindow.Instance.Config;
 
         private static void SaveConfig() => MainWindow.Instance.SaveConfig();
-
-        static SettingsUI()
-        {
-            if (GameSettings.FindSettingsFileByName(FILE_NAME) == null)
-            {
-                GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = FILE_NAME } });
-            }
-        }
 
         public static UISlider AddSlider2(
             this UIHelperBase helper,
