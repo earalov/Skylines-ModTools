@@ -2,6 +2,7 @@
 using ModTools.Utils;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ModTools.UI
 {
@@ -11,6 +12,8 @@ namespace ModTools.UI
         private const float StringFieldSize = 200f;
         private const float ByteFieldSize = 40f;
         private const float CharFieldSize = 25f;
+        public static bool EditingMultiLineField;
+
 
         public delegate T ValuePresenterDelegate<T>(string id, T value)
             where T : struct;
@@ -234,8 +237,11 @@ namespace ModTools.UI
 
             GUI.contentColor = Config.ValueColor;
 
+            int nLines = Math.Min(4, value.Count(c => c == '\n') + 1);
             GUI.SetNextControlName(id);
-            value = GUILayout.TextField(value, GUILayout.Width(StringFieldSize), GUILayout.Height(22f));
+            value = GUILayout.TextArea(value, GUILayout.Width(StringFieldSize), GUILayout.Height(22 * nLines));
+            EditingMultiLineField = !string.IsNullOrEmpty(id) && GUI.GetNameOfFocusedControl() == id;
+
             GUI.contentColor = Color.white;
 
             GUILayout.EndHorizontal();

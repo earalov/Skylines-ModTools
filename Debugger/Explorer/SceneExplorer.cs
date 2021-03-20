@@ -481,10 +481,12 @@ namespace ModTools.Explorer
 
             var enterPressed = Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter);
 
-            if (enterPressed)
+            if (enterPressed && !GUIControls.EditingMultiLineField)
             {
                 GUI.FocusControl(null);
             }
+
+            GUIControls.EditingMultiLineField = false; // consume
 
             state.PreventCircularReferences.Clear();
 
