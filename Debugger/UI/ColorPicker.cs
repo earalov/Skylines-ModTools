@@ -69,8 +69,7 @@ namespace ModTools.UI
             currentHSV.H = 360.0f - currentHSV.H;
             UpdateColorTexture();
 
-            Vector2 mouse = Input.mousePosition;
-            mouse.y = Screen.height - mouse.y;
+            Vector2 mouse = UIScaler.MousePosition;
 
             var windowRect = WindowRect;
             windowRect.position = mouse;
@@ -81,8 +80,7 @@ namespace ModTools.UI
         public void Update()
         {
             try {
-                Vector2 mouse = Input.mousePosition;
-                mouse.y = Screen.height - mouse.y;
+                Vector2 mouse = UIScaler.MousePosition;
 
                 if (Input.GetMouseButton(0)) {
                     if (!WindowRect.Contains(mouse)) {
@@ -105,13 +103,14 @@ namespace ModTools.UI
                     currentHSV.V = Mathf.Clamp01((mouse.y - colorPickerRect.y) / colorPickerRect.height);
                 }
             } catch (Exception ex) {
-                Logger.Exception(ex);
+                HandleException(ex);
             }
         }
 
         protected override void HandleException(Exception ex)
         {
-            Logger.Error("Exception in ColorPicker - " + ex.Message);
+            Debug.Log("error!!!!!!!");
+            Logger.Exception(ex);
             Visible = false;
         }
 
@@ -130,7 +129,7 @@ namespace ModTools.UI
                 var colorPickerLineX = colorPickerRect.y + (float)currentHSV.S * colorPickerRect.height;
                 GUI.DrawTexture(new Rect(colorPickerLineX, colorPickerRect.y - 1.0f, 1.0f, colorPickerRect.height + 2.0f), LineTex);
             } catch(Exception ex) {
-                Logger.Exception(ex);
+                HandleException(ex);
             }
         }
 
@@ -180,7 +179,7 @@ namespace ModTools.UI
 
                 Texture.Apply();
             } catch (Exception ex) {
-                Logger.Exception(ex);
+                HandleException(ex);
             }
         }
     }
