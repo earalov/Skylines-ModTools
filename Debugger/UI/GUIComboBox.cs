@@ -31,7 +31,7 @@ namespace ModTools.UI
             var popupSize = GetPopupDimensions(items);
 
             GUILayout.Box(items[itemIndex], GUILayout.Width(popupSize.x));
-            var popupPosition = GUIUtility.GUIToScreenPoint(GUILayoutUtility.GetLastRect().position);
+            var popupPosition = GUIUtility.GUIToScreenPoint(GUILayoutUtility.GetLastRect().position / UIScaler.UIScale);
             if (GUILayout.Button(ExpandDownButtonText, GUILayout.Width(24f)) && EnsurePopupWindow())
             {
                 popupWindow.Show(callerId, items, itemIndex, popupPosition, popupSize);
@@ -133,7 +133,10 @@ namespace ModTools.UI
             {
                 if (OwnerId != null)
                 {
+                    var matrix0 = GUI.matrix;
+                    GUI.matrix = UIScaler.ScaleMatrix;
                     GUI.ModalWindow(popupWindowId, popupRect, WindowFunction, string.Empty, WindowStyle);
+                    GUI.matrix = matrix0;
                 }
             }
 
@@ -146,9 +149,7 @@ namespace ModTools.UI
 
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
                 {
-                    var mousePos = Input.mousePosition;
-                    mousePos.y = Screen.height - mousePos.y;
-                    mouseClickPoint = mousePos;
+                    mouseClickPoint = UIScaler.MousePosition;
                 }
                 else
                 {

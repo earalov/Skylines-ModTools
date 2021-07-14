@@ -1,4 +1,4 @@
-﻿namespace ModTools.Utils
+﻿namespace ModTools.UI
 {
     using System;
     using System.Linq;
@@ -34,7 +34,7 @@
             var popupSize = GetPopupDimensions(items.Select(item => item.Name), value);
 
             GUILayout.Box(value, GUILayout.Width(popupSize.x));
-            var popupPosition = GUIUtility.GUIToScreenPoint(GUILayoutUtility.GetLastRect().position);
+            var popupPosition = GUIUtility.GUIToScreenPoint(GUILayoutUtility.GetLastRect().position / UIScaler.UIScale) ;
             if (GUILayout.Button(ExpandDownButtonText, GUILayout.Width(24f)) && EnsurePopupWindow())
             {
                 popupWindow.Show(callerId, items, popupPosition, popupSize);
@@ -132,9 +132,11 @@
 
             public void OnGUI()
             {
-                if (OwnerId != null)
-                {
+                if (OwnerId != null) {
+                    var matrix0 = GUI.matrix;
+                    GUI.matrix = UIScaler.ScaleMatrix;
                     GUI.ModalWindow(popupWindowId, popupRect, WindowFunction, string.Empty, WindowStyle);
+                    GUI.matrix = matrix0;
                 }
             }
 
@@ -148,8 +150,7 @@
                 bool clicked = Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2);
                 if (clicked)
                 {
-                    var mousePos = Input.mousePosition;
-                    mousePos.y = Screen.height - mousePos.y;
+                    var mousePos = UIScaler.MousePosition;
                     if (!popupRect.Contains(mousePos))
                         readyToClose = true;
                 }

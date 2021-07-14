@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ModTools.UI
 {
-    internal sealed class ColorPicker : GUIWindow, IGameObject
+    internal sealed class ColorPicker : GUIWindow, IGameObject, IUIObject
     {
         private static readonly Dictionary<string, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
         private static readonly Color LineColor = Color.white;
@@ -69,8 +69,7 @@ namespace ModTools.UI
             currentHSV.H = 360.0f - currentHSV.H;
             UpdateColorTexture();
 
-            Vector2 mouse = Input.mousePosition;
-            mouse.y = Screen.height - mouse.y;
+            Vector2 mouse = UIScaler.MousePosition;
 
             var windowRect = WindowRect;
             windowRect.position = mouse;
@@ -80,74 +79,79 @@ namespace ModTools.UI
 
         public void Update()
         {
-            Vector2 mouse = Input.mousePosition;
-            mouse.y = Screen.height - mouse.y;
+            try {
+                Vector2 mouse = UIScaler.MousePosition;
 
-            if (Input.GetMouseButton(0))
-            {
-                if (!WindowRect.Contains(mouse))
-                {
-                    Visible = false;
+                if (Input.GetMouseButton(0)) {
+                    if (!WindowRect.Contains(mouse)) {
+                        Visible = false;
+                        return;
+                    }
+                } else {
                     return;
                 }
-            }
-            else
-            {
-                return;
-            }
 
-            mouse -= WindowRect.position;
+                mouse -= WindowRect.position;
 
-            if (hueBarRect.Contains(mouse))
-            {
-                currentHSV.H = (1.0f - Mathf.Clamp01((mouse.y - hueBarRect.y) / hueBarRect.height)) * 360.0f;
-                UpdateColorTexture();
-            }
+                if (hueBarRect.Contains(mouse)) {
+                    currentHSV.H = (1.0f - Mathf.Clamp01((mouse.y - hueBarRect.y) / hueBarRect.height)) * 360.0f;
+                    UpdateColorTexture();
+                }
 
-            if (colorPickerRect.Contains(mouse))
-            {
-                currentHSV.S = Mathf.Clamp01((mouse.x - colorPickerRect.x) / colorPickerRect.width);
-                currentHSV.V = Mathf.Clamp01((mouse.y - colorPickerRect.y) / colorPickerRect.height);
+                if (colorPickerRect.Contains(mouse)) {
+                    currentHSV.S = Mathf.Clamp01((mouse.x - colorPickerRect.x) / colorPickerRect.width);
+                    currentHSV.V = Mathf.Clamp01((mouse.y - colorPickerRect.y) / colorPickerRect.height);
+                }
+            } catch (Exception ex) {
+                HandleException(ex);
             }
         }
 
         protected override void HandleException(Exception ex)
         {
-            Logger.Error("Exception in ColorPicker - " + ex.Message);
+            Debug.Log("error!!!!!!!");
+            Logger.Exception(ex);
             Visible = false;
         }
 
         protected override void DrawWindow()
         {
-            GUI.DrawTexture(colorPickerRect, Texture);
-            GUI.DrawTexture(hueBarRect, HueBar);
+            try {
+                GUI.DrawTexture(colorPickerRect, Texture);
+                GUI.DrawTexture(hueBarRect, HueBar);
 
-            var hueBarLineY = hueBarRect.y + (1.0f - (float)currentHSV.H / 360.0f) * hueBarRect.height;
-            GUI.DrawTexture(new Rect(hueBarRect.x - 2.0f, hueBarLineY, hueBarRect.width + 4.0f, 2.0f), LineTex);
+                var hueBarLineY = hueBarRect.y + (1.0f - (float)currentHSV.H / 360.0f) * hueBarRect.height;
+                GUI.DrawTexture(new Rect(hueBarRect.x - 2.0f, hueBarLineY, hueBarRect.width + 4.0f, 2.0f), LineTex);
 
-            var colorPickerLineY = colorPickerRect.x + (float)currentHSV.V * colorPickerRect.width;
-            GUI.DrawTexture(new Rect(colorPickerRect.x - 1.0f, colorPickerLineY, colorPickerRect.width + 2.0f, 1.0f), LineTex);
+                var colorPickerLineY = colorPickerRect.x + (float)currentHSV.V * colorPickerRect.width;
+                GUI.DrawTexture(new Rect(colorPickerRect.x - 1.0f, colorPickerLineY, colorPickerRect.width + 2.0f, 1.0f), LineTex);
 
-            var colorPickerLineX = colorPickerRect.y + (float)currentHSV.S * colorPickerRect.height;
-            GUI.DrawTexture(new Rect(colorPickerLineX, colorPickerRect.y - 1.0f, 1.0f, colorPickerRect.height + 2.0f), LineTex);
+                var colorPickerLineX = colorPickerRect.y + (float)currentHSV.S * colorPickerRect.height;
+                GUI.DrawTexture(new Rect(colorPickerLineX, colorPickerRect.y - 1.0f, 1.0f, colorPickerRect.height + 2.0f), LineTex);
+            } catch(Exception ex) {
+                HandleException(ex);
+            }
         }
 
         private static Texture2D DrawHueBar(int width, int height)
         {
-            var texture = new Texture2D(width, height);
+            try {
+                var texture = new Texture2D(width, height);
 
-            for (var y = 0; y < height; y++)
-            {
-                var color = GetColorAtT(y / (float)height * 360.0f);
+                for (var y = 0; y < height; y++) {
+                    var color = GetColorAtT(y / (float)height * 360.0f);
 
-                for (var x = 0; x < width; x++)
-                {
-                    texture.SetPixel(x, y, color);
+                    for (var x = 0; x < width; x++) {
+                        texture.SetPixel(x, y, color);
+                    }
                 }
-            }
 
-            texture.Apply();
-            return texture;
+                texture.Apply();
+                return texture;
+            } catch(Exception ex) {
+                Logger.Exception(ex);
+                return null;
+            }
         }
 
         private static Texture2D DrawLineTex()
@@ -166,15 +170,17 @@ namespace ModTools.UI
 
         private void UpdateColorTexture()
         {
-            for (var x = 0; x < Texture.width; x++)
-            {
-                for (var y = 0; y < Texture.height; y++)
-                {
-                    Texture.SetPixel(x, y, GetColorAtXY(currentHSV.H, x / (float)Texture.width, 1.0f - y / (float)Texture.height));
+            try {
+                for (var x = 0; x < Texture.width; x++) {
+                    for (var y = 0; y < Texture.height; y++) {
+                        Texture.SetPixel(x, y, GetColorAtXY(currentHSV.H, x / (float)Texture.width, 1.0f - y / (float)Texture.height));
+                    }
                 }
-            }
 
-            Texture.Apply();
+                Texture.Apply();
+            } catch (Exception ex) {
+                HandleException(ex);
+            }
         }
     }
 }
